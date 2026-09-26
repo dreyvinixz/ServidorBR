@@ -1,0 +1,39 @@
+name: Bug
+description: Registre um comportamento que diverge do esperado.
+title: "[BUG] "
+labels: ["bug"]
+body:
+  - type: input
+    id: sprint
+    attributes:
+      label: Sprint afetada
+      placeholder: Sprint 1 ou Sprint 2
+    validations:
+      required: true
+  - type: textarea
+    id: description
+    attributes:
+      label: Descrição do problema
+    validations:
+      required: true
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Como reproduzir
+      value: |
+        1. 
+        2. 
+        3. 
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Resultado esperado e resultado atual
+    validations:
+      required: true
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Evidências
+      description: Anexe logs, capturas, comando executado ou resposta HTTP, sem credenciais.
