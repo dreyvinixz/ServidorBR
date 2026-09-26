@@ -4,7 +4,7 @@ Este arquivo é um espelho inicial do GitHub Project. O quadro oficial deve ser 
 
 **Branch de integração:** `sprint/01-fundacao-api`  
 **Pontos planejados:** 60  
-**Início real:** `2026-09-25`  
+**Início real:** `2026-09-25`
 **Término real:** `PREENCHER`
 
 | Status | Task | Responsável | Pontos | Issue | PR | Impedimento / observação |
