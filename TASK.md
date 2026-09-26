@@ -4,7 +4,7 @@ Quadro operacional das tasks da equipe. Os requisitos, critérios de aceite e es
 
 ## Equipe
 
-- DEV-01 - Guilherme EstrellaShaarkegas (`@Shaarkegas`): Dados e Banco
+- DEV-01 - Guilherme Estrella (`@Shaarkegas`): Dados e Banco
 - DEV-02 - `@dreyvinixz`: Líder técnico, Backend e DevOps/QA
 - DEV-03 - `PREENCHER`: Frontend
 
