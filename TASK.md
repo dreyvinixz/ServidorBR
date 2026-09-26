@@ -4,7 +4,7 @@ Este documento transforma o planejamento do [`ROADMAP.md`](ROADMAP.md) em tarefa
 
 | Código | Integrante | GitHub | Responsabilidade principal |
 | --- | --- | --- | --- |
-| DEV-01 | `Guilherme` | `PREENCHER` | Dados e Banco |
+| DEV-01 | `Guilherme EstrellaShaarkegas` | `@Shaarkegas` | Dados e Banco |
 | DEV-02 | `PREENCHER` | `@dreyvinixz` | Líder técnico, Backend e DevOps/QA |
 | DEV-03 | `PREENCHER` | `@PREENCHER` | Frontend |
 

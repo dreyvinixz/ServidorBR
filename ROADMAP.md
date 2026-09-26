@@ -31,7 +31,7 @@ Os nomes devem ser preenchidos antes do início da Sprint 1. Os papéis não imp
 | Papel | Integrante | Responsabilidade principal |
 | --- | --- | --- |
 | Líder técnico / Backend / DevOps / QA | `@dreyvinixz` | Arquitetura, API Flask, integrações, Docker, CI, testes, carga, revisão técnica e acompanhamento diário. |
-| Dados / Banco | `Guilherme` | Dicionário de dados, ETL, PostgreSQL, normalização e índices. |
+| Dados / Banco | `Guilherme EstrellaShaarkegas (@Shaarkegas)` | Dicionário de dados, ETL, PostgreSQL, normalização e índices. |
 | Frontend | `PREENCHER` | Interface React, experiência responsiva e consumo exclusivo da API. |
 
 O nome e o usuário GitHub do integrante de Frontend devem ser preenchidos antes do início da Sprint 1. A colaboração e a revisão cruzada continuam permitidas, mas a autoria dos commits deve refletir o trabalho efetivamente realizado por cada pessoa.
