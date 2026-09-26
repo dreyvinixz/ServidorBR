@@ -9,7 +9,7 @@ Este arquivo é um espelho inicial do GitHub Project. O quadro oficial deve ser 
 
 | Status | Task | Responsável | Pontos | Issue | PR | Impedimento / observação |
 | --- | --- | --- | ---: | --- | --- | --- |
-| In Progress | SB-01 - Repositório, quadro ágil, Issues e modelos de PR | DEV-02 | 3 | `PREENCHER` | `PREENCHER` | Templates, branches e esqueletos de documentação publicados; falta criar Issue/Project, convidar membros, abrir PR e obter revisão. |
+| Review | SB-01 - Repositório, quadro ágil, Issues e modelos de PR | DEV-02 | 3 | [#1](https://github.com/dreyvinixz/servidorbr/issues/1) | [#2](https://github.com/dreyvinixz/servidorbr/pull/2) | PR aberto; adicionar @Shaarkegas como colaborador para solicitar a revisão. Project e proteção de branch pendentes. |
 | Todo | SB-02 - Dicionários dos datasets e mapeamento de campos | DEV-01 | 5 | `PREENCHER` | `PREENCHER` | - |
 | Todo | SB-03 - Schema e scripts PostgreSQL | DEV-01 | 5 | `PREENCHER` | `PREENCHER` | Depende de SB-02. |
 | Todo | SB-04 - Extensão e índices de pesquisa | DEV-01 | 3 | `PREENCHER` | `PREENCHER` | Depende de SB-03. |
