@@ -1,14 +1,14 @@
-# Tasks e Rodízio da Equipe - ServidorBR
+# Tasks da Equipe - ServidorBR
 
-Este documento transforma o planejamento do [`ROADMAP.md`](ROADMAP.md) em tarefas atribuídas a uma equipe de **três desenvolvedores**. Antes de iniciar, substituam os identificadores pelos nomes e usuários GitHub reais.
+Este documento transforma o planejamento do [`ROADMAP.md`](ROADMAP.md) em tarefas atribuídas a uma equipe de **três desenvolvedores**. A divisão principal é fixa; colaboração e revisão cruzada não alteram a autoria real dos commits.
 
-| Código | Integrante | GitHub | Papel na Sprint 1 | Papel na Sprint 2 |
-| --- | --- | --- | --- | --- |
-| DEV-01 | `PREENCHER` | `@PREENCHER` | Dados e Banco | Frontend |
-| DEV-02 | `PREENCHER` | `@PREENCHER` | Backend e Líder técnico | Dados e Banco |
-| DEV-03 | `PREENCHER` | `@PREENCHER` | Frontend e DevOps/QA | Backend e DevOps/QA |
+| Código | Integrante | GitHub | Responsabilidade principal |
+| --- | --- | --- | --- |
+| DEV-01 | `Guilherme` | `PREENCHER` | Dados e Banco |
+| DEV-02 | `PREENCHER` | `@dreyvinixz` | Líder técnico, Backend e DevOps/QA |
+| DEV-03 | `PREENCHER` | `@PREENCHER` | Frontend |
 
-O rodízio garante que cada integrante participe de ao menos duas áreas técnicas durante o projeto. O responsável é quem executa e cria os commits principais; o apoio pode colaborar e revisar, sem substituir a autoria real.
+O responsável é quem executa e cria os commits principais; o apoio pode colaborar e revisar, sem substituir a autoria real.
 
 ## Regras obrigatórias de Git e Pull Request
 
@@ -54,8 +54,8 @@ main
 | SB-07 | Implementar busca e filtros combinados parametrizados | DEV-02 | DEV-01 | `feat/SB-07-api-filtros` | 8 | Nome, cargo, UF e órgão funcionam combinados. |
 | SB-08 | Validar parâmetros, paginação e erros JSON | DEV-02 | DEV-03 | `feat/SB-08-validacao-paginacao` | 5 | Entradas inválidas retornam 400 padronizado. |
 | SB-09 | Configurar Gunicorn, timeout e rate limiting | DEV-02 | DEV-01 | `feat/SB-09-protecao-api` | 5 | Há concorrência, 429 e tratamento seguro de timeout. |
-| SB-10 | Dockerfiles, Compose, healthchecks e `.env.example` | DEV-03 | DEV-02 | `chore/SB-10-docker-compose` | 5 | Três serviços sobem com `docker compose up --build`. |
-| SB-11 | Testes de API, validação e SQL injection | DEV-03 | DEV-01 | `test/SB-11-api-seguranca` | 8 | Testes de filtros e payloads maliciosos passam. |
+| SB-10 | Dockerfiles, Compose, healthchecks e `.env.example` | DEV-02 | DEV-03 | `chore/SB-10-docker-compose` | 5 | Três serviços sobem com `docker compose up --build`. |
+| SB-11 | Testes de API, validação e SQL injection | DEV-02 | DEV-01 | `test/SB-11-api-seguranca` | 8 | Testes de filtros e payloads maliciosos passam. |
 
 **Total: 60 pontos.**
 
@@ -75,15 +75,15 @@ main
 | Task | Descrição | Responsável | Apoio / revisor preferencial | Branch | Pontos | Critério resumido |
 | --- | --- | --- | --- | --- | ---: | --- |
 | SB-12 | Busca por similaridade via `pg_trgm` com limite máximo | DEV-02 | DEV-01 | `feat/SB-12-busca-similaridade` | 5 | Busca parcial retorna no máximo 100 resultados. |
-| SB-13 | Estrutura React, layout e responsividade | DEV-01 | DEV-03 | `feat/SB-13-layout-react` | 8 | Tela principal funciona em celular e desktop. |
-| SB-14 | Formulário de filtros e consumo exclusivo da API | DEV-01 | DEV-02 | `feat/SB-14-formulario-busca` | 8 | Todos os filtros geram chamadas HTTP corretas. |
-| SB-15 | Lista, detalhes, paginação e estados de interface | DEV-01 | DEV-03 | `feat/SB-15-resultados-paginacao` | 8 | Loading, vazio, erro, timeout e 429 são exibidos. |
-| SB-16 | Proxy Nginx e integração frontend-backend | DEV-03 | DEV-01 | `feat/SB-16-proxy-integracao` | 3 | Frontend acessa a API por `/api` em containers. |
-| SB-17 | Cenários de carga e coleta de métricas reais | DEV-03 | DEV-02 | `test/SB-17-carga` | 5 | RPS, latências, erros, CPU e RAM documentados. |
-| SB-18 | Otimizar consultas e registrar limitações | DEV-02 | DEV-03 | `perf/SB-18-otimizacao-consultas` | 5 | Decisões justificadas por resultados medidos. |
-| SB-19 | Pipeline de CI para testes e build | DEV-03 | DEV-02 | `ci/SB-19-pipeline` | 3 | Pipeline executa testes e build sem falhas. |
-| SB-20 | Documentação técnica, relatório e burndown real | DEV-01 | DEV-02 | `docs/SB-20-relatorio-final` | 5 | Todos os documentos e evidências reais estão completos. |
-| SB-21 | Checklist, regressão e preparação da entrega | DEV-03 | DEV-01 | `chore/SB-21-entrega-final` | 3 | Build limpo e checklist de aceite concluído. |
+| SB-13 | Estrutura React, layout e responsividade | DEV-03 | DEV-02 | `feat/SB-13-layout-react` | 8 | Tela principal funciona em celular e desktop. |
+| SB-14 | Formulário de filtros e consumo exclusivo da API | DEV-03 | DEV-02 | `feat/SB-14-formulario-busca` | 8 | Todos os filtros geram chamadas HTTP corretas. |
+| SB-15 | Lista, detalhes, paginação e estados de interface | DEV-03 | DEV-02 | `feat/SB-15-resultados-paginacao` | 8 | Loading, vazio, erro, timeout e 429 são exibidos. |
+| SB-16 | Proxy Nginx e integração frontend-backend | DEV-02 | DEV-03 | `feat/SB-16-proxy-integracao` | 3 | Frontend acessa a API por `/api` em containers. |
+| SB-17 | Cenários de carga e coleta de métricas reais | DEV-02 | DEV-01 | `test/SB-17-carga` | 5 | RPS, latências, erros, CPU e RAM documentados. |
+| SB-18 | Otimizar consultas e registrar limitações | DEV-01 | DEV-02 | `perf/SB-18-otimizacao-consultas` | 5 | Decisões justificadas por resultados medidos. |
+| SB-19 | Pipeline de CI para testes e build | DEV-02 | DEV-03 | `ci/SB-19-pipeline` | 3 | Pipeline executa testes e build sem falhas. |
+| SB-20 | Documentação técnica, relatório e burndown real | DEV-02 | DEV-01 | `docs/SB-20-relatorio-final` | 5 | Todos os documentos e evidências reais estão completos. |
+| SB-21 | Checklist, regressão e preparação da entrega | DEV-02 | DEV-03 | `chore/SB-21-entrega-final` | 3 | Build limpo e checklist de aceite concluído. |
 
 **Total: 53 pontos.**
 
@@ -114,4 +114,3 @@ Cada pessoa atualiza uma linha por dia útil no quadro da sprint ou no relatóri
 | Data | Dev | Task | Status | Commit/PR | Impedimento | Próxima ação |
 | --- | --- | --- | --- | --- | --- | --- |
 | AAAA-MM-DD | DEV-01 | SB-02 | In Progress | `hash ou URL` | `nenhum ou descrição real` | Revisar campos de órgão. |
-

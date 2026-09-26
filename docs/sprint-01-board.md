@@ -18,8 +18,8 @@ Este arquivo é um espelho inicial do GitHub Project. O quadro oficial deve ser 
 | Todo | SB-07 - Filtros combinados | DEV-02 | 8 | `PREENCHER` | `PREENCHER` | Depende de SB-04 e SB-06. |
 | Todo | SB-08 - Validação e paginação | DEV-02 | 5 | `PREENCHER` | `PREENCHER` | Depende de SB-07. |
 | Todo | SB-09 - Gunicorn, timeout e rate limit | DEV-02 | 5 | `PREENCHER` | `PREENCHER` | Depende de SB-06. |
-| Todo | SB-10 - Docker Compose e healthchecks | DEV-03 | 5 | `PREENCHER` | `PREENCHER` | Depende de SB-03 e SB-06. |
-| Todo | SB-11 - Testes de API e segurança | DEV-03 | 8 | `PREENCHER` | `PREENCHER` | Depende de SB-07, SB-08 e SB-09. |
+| Todo | SB-10 - Docker Compose e healthchecks | DEV-02 | 5 | `PREENCHER` | `PREENCHER` | Depende de SB-03 e SB-06. |
+| Todo | SB-11 - Testes de API e segurança | DEV-02 | 8 | `PREENCHER` | `PREENCHER` | Depende de SB-07, SB-08 e SB-09. |
 
 ## Configuração obrigatória no GitHub Project
 
