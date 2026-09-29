@@ -1,0 +1,69 @@
+name: Task da sprint
+description: Registre uma tarefa planejada do ServidorBR.
+title: "[SB-XX] "
+labels: ["task"]
+body:
+  - type: input
+    id: task_id
+    attributes:
+      label: Identificador da task
+      description: Use o identificador definido em TASK.md, por exemplo SB-07.
+      placeholder: SB-XX
+    validations:
+      required: true
+  - type: dropdown
+    id: sprint
+    attributes:
+      label: Sprint
+      options:
+        - Sprint 1 - Fundação e API pesquisável
+        - Sprint 2 - Experiência web, desempenho e entrega
+    validations:
+      required: true
+  - type: input
+    id: responsible
+    attributes:
+      label: Responsável
+      description: Informe DEV-01, DEV-02 ou DEV-03 e o usuário GitHub quando definido.
+      placeholder: DEV-02 - @usuario
+    validations:
+      required: true
+  - type: input
+    id: estimate
+    attributes:
+      label: Estimativa
+      placeholder: 5 pontos
+    validations:
+      required: true
+  - type: textarea
+    id: description
+    attributes:
+      label: Descrição
+      description: Explique o resultado a ser produzido, não apenas a atividade.
+    validations:
+      required: true
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: Critérios de aceite
+      value: |
+        - [ ] Critério 1
+        - [ ] Critério 2
+        - [ ] Testes/documentação aplicáveis atualizados
+    validations:
+      required: true
+  - type: input
+    id: branch
+    attributes:
+      label: Branch planejada
+      description: Crie-a a partir da branch de integração da sprint.
+      placeholder: feat/SB-XX-resumo
+    validations:
+      required: true
+  - type: textarea
+    id: dependencies
+    attributes:
+      label: Dependências e impedimentos
+      description: Informe tasks bloqueadoras, acessos necessários ou escreva "Nenhum".
+    validations:
+      required: true
