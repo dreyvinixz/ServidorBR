@@ -1,15 +1,16 @@
-# Documentação do ServidorBR
+# Documentação ServidorBR
 
-Esta pasta concentrará as evidências técnicas produzidas durante as duas sprints planejadas em [`ROADMAP.md`](../ROADMAP.md).
+Documentação baseada no código e nas evidências disponíveis até 20/10/2026.
 
-| Arquivo | Finalidade | Status |
-| --- | --- | --- |
-| `arquitetura.md` | Decisões de arquitetura e containers | Planejado - SB-20 |
-| `dados-e-etl.md` | Fontes oficiais, mapeamento e importação | Planejado - SB-02/SB-05 |
-| `api.md` | Contrato HTTP/JSON da API | Planejado - SB-06 a SB-12 |
-| `seguranca.md` | Controles de validação e proteção | Planejado - SB-09 |
-| `testes-e-carga.md` | Testes automatizados e métricas medidas | Planejado - SB-11/SB-17 |
-| `relatorio-final.md` | Evidências da equipe e conclusão | Planejado - SB-20 |
-| `burndown.csv` | Pontos reais restantes por dia | Planejado - início da Sprint 1 |
+| Arquivo | Conteúdo/estado |
+|---|---|
+| [`arquitetura.md`](arquitetura.md) | Serviços Docker, portas, rede e limites |
+| [`dados-e-etl.md`](dados-e-etl.md) | Dicionário, mapeamento, importação, privacidade e lacuna de UF |
+| [`api.md`](api.md) | Rotas, parâmetros, respostas e erros |
+| [`seguranca.md`](seguranca.md) | Controles efetivos e próximos controles |
+| [`testes-e-carga.md`](testes-e-carga.md) | Comandos executados e lacuna de benchmark |
+| [`relatorio-final.md`](relatorio-final.md) | Estado, autoria, prazos, evidências e pendências de aceitação |
+| [`burndown.csv`](burndown.csv) | Histórico real disponível, atualizado somente até 26/09/2026 |
+| [`sprint-01-board.md`](sprint-01-board.md) | Snapshot do quadro de Sprint 1 |
 
-Os documentos serão preenchidos à medida que o trabalho real for executado. Nenhuma evidência deve ser criada retroativamente.
+Os espaços de equipe, métricas e atividades sem evidência permanecem em aberto; não são preenchidos por estimativa retroativa.

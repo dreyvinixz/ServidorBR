@@ -1,0 +1,5 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Documentação do projeto
+    url: https://github.com/dreyvinixz/servidorbr/blob/main/README.md
+    about: Consulte o README, ROADMAP e TASK antes de abrir uma Issue.

@@ -6,6 +6,8 @@ Este documento é o plano de trabalho oficial do projeto **ServidorBR**. Ele org
 
 > Importante: este plano não substitui o trabalho real. Commits, pull requests e mudanças de status devem ser registrados somente na data em que acontecerem e pela conta GitHub da pessoa responsável. Não criar commits retroativos ou simular atividade anterior.
 
+> Estado de 20/10/2026: há uma implementação MVP local na branch `feat/SB-02-21-mvp-entrega`, documentada em `docs/relatorio-final.md`. O prazo de entrega definido no enunciado (13/10/2026) já passou. O MVP solo não satisfaz a regra de equipe mínima de três pessoas; os itens do roadmap permanecem abertos até revisão/integracão e comprovação de seus critérios.
+
 ## 2. Visão do produto
 
 ServidorBR é uma aplicação web para consulta de dados públicos de servidores ativos e aposentados do Poder Executivo Federal. A pessoa usuária poderá pesquisar por nome, similaridade de nome, cargo/profissão, UF e órgão/instituição, combinar filtros e navegar pelos resultados paginados.
@@ -30,12 +32,11 @@ Os nomes devem ser preenchidos antes do início da Sprint 1. Os papéis não imp
 
 | Papel | Integrante | Responsabilidade principal |
 | --- | --- | --- |
-| Líder técnico / Backend | `PREENCHER` | Arquitetura, API Flask, integrações, revisão técnica e acompanhamento diário. |
-| Dados / Banco | `PREENCHER` | Dicionário de dados, ETL, PostgreSQL, normalização e índices. |
+| Líder técnico / Backend / DevOps / QA | `@dreyvinixz` | Arquitetura, API Flask, integrações, Docker, CI, testes, carga, revisão técnica e acompanhamento diário. |
+| Dados / Banco | `Guilherme EstrellaShaarkegas (@Shaarkegas)` | Dicionário de dados, ETL, PostgreSQL, normalização e índices. |
 | Frontend | `PREENCHER` | Interface React, experiência responsiva e consumo exclusivo da API. |
-| DevOps / QA | `PREENCHER` | Docker, CI, testes, carga, evidências e relatório. |
 
-Se a equipe tiver três integrantes, o papel DevOps / QA será acumulado pelo Líder técnico, mas as tarefas continuam separadas no quadro.
+O nome e o usuário GitHub do integrante de Frontend devem ser preenchidos antes do início da Sprint 1. A colaboração e a revisão cruzada continuam permitidas, mas a autoria dos commits deve refletir o trabalho efetivamente realizado por cada pessoa.
 
 ## 4. Processo ágil e rastreabilidade
 
