@@ -31,4 +31,4 @@ pytest backend/tests
 - [ ] A mudança não quebra o contrato da API ou Docker Compose.
 - [ ] Aprovo a mesclagem.
 
-> A mesclagem exige ao menos uma aprovação de pessoa diferente da autora.
+> No fluxo solo atual, `main` exige o check `backend`, branch atualizada e bloqueia force push/exclusão; aprovação independente é recomendada quando houver outra pessoa revisora disponível.
