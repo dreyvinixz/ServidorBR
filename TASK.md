@@ -10,7 +10,7 @@ Quadro operacional das tasks da equipe. Os requisitos, critérios de aceite e es
 
 ## Estado da implementação local - 20/10/2026
 
-- A `main` contém um MVP integrado de API, Compose, PostgreSQL, ETL e interface. O volume local contém 811 registros oficiais de aposentados; testes e medições estão em [`docs/testes-e-carga.md`](docs/testes-e-carga.md).
+- A `main` contém um MVP integrado de API, Compose, PostgreSQL, ETL e interface. O volume local contém 414.801 registros oficiais de aposentados; testes e medições estão em [`docs/testes-e-carga.md`](docs/testes-e-carga.md).
 - As caixas SB-01 a SB-21 abaixo continuam abertas como estado de aceite: nenhuma task deve ser marcada `Done` antes do PR, checks, integração e critérios de aceite exigidos neste documento.
 - O usuário decidiu entregar individualmente; a implementação atual tem autoria Git de uma só conta. O requisito acadêmico de três ou quatro participantes continua não atendido; autoria e histórico dos demais não podem ser presumidos.
 - O prazo do enunciado era 13/10/2026; esta implementação iniciou em 20/10/2026.

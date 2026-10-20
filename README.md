@@ -2,7 +2,7 @@
 
 Aplicação full stack para consulta de dados públicos de servidores aposentados do Poder Executivo Federal, com PostgreSQL, API Flask/Gunicorn e interface HTML/CSS/JavaScript servida por Nginx.
 
-MVP integrado à `main` em 20/10/2026. Uma instalação nova começa vazia e precisa importar um CSV oficial; o volume local de desenvolvimento contém uma amostra de 811 aposentados da competência 08/2025. A fonte de aposentados não informa UF; o filtro retorna `422 UF_UNAVAILABLE`. O enunciado requer três ou quatro integrantes reais e entrega até 13/10/2026; esse desenvolvimento solo e posterior ao prazo não atende esses critérios acadêmicos.
+MVP integrado à `main` em 20/10/2026. Uma instalação nova começa vazia e precisa importar um CSV oficial; o volume local de desenvolvimento contém 414.801 registros de aposentados da competência 08/2025. A fonte de aposentados não informa UF; o filtro retorna `422 UF_UNAVAILABLE`. O enunciado requer três ou quatro integrantes reais e entrega até 13/10/2026; esse desenvolvimento solo e posterior ao prazo não atende esses critérios acadêmicos.
 
 
 ## Objetivos
