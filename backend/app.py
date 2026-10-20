@@ -32,24 +32,62 @@ def health():
         return jsonify(error={"code": "DATABASE_UNAVAILABLE", "message": "Banco de dados indisponível."}), 503
 
 
+def error(code, message, status):
+    return jsonify(error={"code": code, "message": message}), status
+
+
 @app.get("/api/servidores")
 def search():
+    unknown = set(request.args) - ALLOWED
+    if unknown:
+        return error("UNKNOWN_PARAMETER", "Parâmetro de busca desconhecido.", 400)
+
+    def integer(key, default, maximum):
+        raw = request.args.get(key, str(default))
+        if not re.fullmatch(r"[0-9]+", raw):
+            raise ValueError(key)
+        value = int(raw)
+        if not 1 <= value <= maximum:
+            raise ValueError(key)
+        return value
+
+    try:
+        page = integer("page", 1, 1_000_000)
+        per_page = integer("per_page", 25, 100)
+        limit = integer("limit", 100, 100)
+    except ValueError as exc:
+        return error("INVALID_PAGINATION", f"Parâmetro inválido: {exc.args[0]}.", 400)
+
     filters, params = [], {}
     for key, column in (("nome", "nome_norm"), ("cargo", "cargo_norm"), ("orgao", "orgao_norm")):
         value = request.args.get(key)
         if value is not None:
             value = normalize(value)
+            maximum = 160 if key == "orgao" else 120
+            if not value or len(value) > maximum:
+                return error("INVALID_QUERY", f"{key} deve ter entre 1 e {maximum} caracteres.", 400)
             if key == "nome":
                 filters.append(f"{column} = %({key})s")
                 params[key] = value
             else:
                 filters.append(f"{column} LIKE %({key})s")
                 params[key] = f"%{value}%"
+    similar = request.args.get("similar")
+    if similar is not None:
+        similar = normalize(similar)
+        if not 2 <= len(similar) <= 120:
+            return error("INVALID_QUERY", "similar deve ter entre 2 e 120 caracteres.", 400)
+        params["similar"] = similar.replace("%", "")
+        params["pattern"] = f"%{similar}%"
+        filters.extend(["nome_norm % %(similar)s", "nome_norm LIKE %(pattern)s"])
     where = " WHERE " + " AND ".join(filters) if filters else ""
+    page_size = min(per_page, limit) if similar is not None else per_page
+    params.update(limit=page_size, offset=(page - 1) * page_size)
     started = time.perf_counter()
     with db() as conn:
         total = conn.execute(f"SELECT count(*) AS n FROM servidores{where}", params).fetchone()["n"]
+        order = "similarity(nome_norm, %(similar)s) DESC, nome_norm" if similar is not None else "nome_norm"
         rows = conn.execute(
-            f"SELECT id,nome,cargo,orgao,uf FROM servidores{where} ORDER BY nome_norm LIMIT 25", params
+            f"SELECT id,nome,cargo,orgao,uf FROM servidores{where} ORDER BY {order} LIMIT %(limit)s OFFSET %(offset)s", params
         ).fetchall()
-    return jsonify(data=rows, pagination={"page": 1, "per_page": 25, "total": total, "pages": (total + 24) // 25}, query_time_ms=round((time.perf_counter() - started) * 1000, 2))
+    return jsonify(data=rows, pagination={"page": page, "per_page": page_size, "total": total, "pages": (total + page_size - 1) // page_size}, query_time_ms=round((time.perf_counter() - started) * 1000, 2))
