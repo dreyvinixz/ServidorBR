@@ -12,6 +12,7 @@ import psycopg
 
 DATABASE_URL = os.environ.get("DATABASE_URL", "postgresql://servidorbr:local-dev-only@localhost:5432/servidorbr")
 OFFICIAL_COLUMNS = 18
+MAX_CSV_FIELD_CHARS = 1_000_000
 
 
 def norm(value):
@@ -38,6 +39,7 @@ def detect_encoding(path):
 
 def iter_search_fields(source, dialect):
     """Yield only name, cargo, and agency from headered or official positional CSVs."""
+    csv.field_size_limit(MAX_CSV_FIELD_CHARS)
     reader = csv.reader(source, dialect=dialect)
     first = next(reader, None)
     if first is None:
@@ -45,7 +47,8 @@ def iter_search_fields(source, dialect):
 
     columns = {key(name): index for index, name in enumerate(first)}
     has_header = "NOME" in columns and (
-        len(first) != OFFICIAL_COLUMNS or bool({"CARGO", "NOMEDOORGAO"} & columns.keys())
+        len(first) < OFFICIAL_COLUMNS
+        or bool({"CARGO", "NOMEDOORGAO", "CPF", "MATRICULADOSERVIDOR"} & columns.keys())
     )
     if has_header:
         def value(row, *names):
@@ -61,13 +64,13 @@ def iter_search_fields(source, dialect):
 
     # Official APOSENTADOS_MMAAAA files have no header. The published dictionary
     # orders Nome at 0, Nome do órgão at 3, and Cargo at 6 in an 18-column row.
-    if len(first) != OFFICIAL_COLUMNS:
+    if len(first) < OFFICIAL_COLUMNS:
         raise SystemExit(
-            f"CSV incompatível: esperado cabeçalho com Nome ou {OFFICIAL_COLUMNS} colunas oficiais."
+            f"CSV incompatível: esperado cabeçalho com Nome ou ao menos {OFFICIAL_COLUMNS} colunas oficiais."
         )
     yield (first[0] or "").strip(), (first[6] or "").strip(), (first[3] or "").strip()
     for row in reader:
-        if len(row) != OFFICIAL_COLUMNS:
+        if len(row) < OFFICIAL_COLUMNS:
             yield "", "", ""
         else:
             yield (row[0] or "").strip(), (row[6] or "").strip(), (row[3] or "").strip()

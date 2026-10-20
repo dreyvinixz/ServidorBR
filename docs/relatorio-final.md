@@ -5,7 +5,7 @@
 
 ## 1. Escopo disponível
 
-O MVP reúne frontend estático, API Flask/Gunicorn, PostgreSQL com índices `pg_trgm`, ETL de CSV e Compose. Uma instalação nova começa com banco vazio e recebe dados por importação local. O volume local de desenvolvimento contém 811 registros de aposentados da competência 08/2025; o CSV original não foi incluído no repositório.
+O MVP reúne frontend estático, API Flask/Gunicorn, PostgreSQL com índices `pg_trgm`, ETL de CSV e Compose. Uma instalação nova começa com banco vazio e recebe dados por importação local. O volume local de desenvolvimento contém 414.801 registros de aposentados da competência 08/2025; os CSVs originais não foram incluídos no repositório.
 
 ## 2. Equipe e histórico verificável
 
@@ -20,15 +20,15 @@ O enunciado define entrega limite em 13/10/2026. Esta implementação começou e
 ## 4. Evidências técnicas
 
 - `docker compose config -q`: passou em 20/10/2026.
-- `python -m unittest discover -s backend -p 'test_*.py'`: 11 testes passaram em 20/10/2026, incluindo API, ETL, formato oficial CP1252 e reimportação idempotente.
+- `python -m unittest discover -s backend -p 'test_*.py'`: 12 testes passaram em 20/10/2026, incluindo API, ETL, formato oficial CP1252, campo extralongo e reimportação idempotente.
 - Os três serviços iniciaram; `db` e `backend` ficaram saudáveis; página e `GET /api/health` retornaram HTTP 200.
-- Amostra oficial `APOSENTADOS_082025.csv`: 811 linhas, 811 inseridas, 0 duplicadas/rejeitadas; reimportação: 0 inseridas e 811 duplicatas. CPF e matrícula não existem no schema e não são enviados ao banco pelo ETL.
-- Busca por cargo retornou HTTP 200 e 35 registros; similaridade retornou HTTP 200 e 6. O defeito no operador `%` do `pg_trgm` foi corrigido e ganhou teste de regressão.
-- Medições sequenciais de API: 20 amostras por cenário, sem concorrência; P50/P95 foram registrados em `docs/testes-e-carga.md`. Importação e consultas foram medidas somente com 811 registros; não há benchmark concorrente, CPU/RAM ou projeção para a base completa.
+- Fontes oficiais `APOSENTADOS_082025.csv` e `APOSENTADOS_082025_FULL.csv`: 811 e 413.990 linhas inseridas, respectivamente; banco com 414.801 hashes únicos. A reimportação da extração mensal inseriu 0 e reconheceu 811 duplicatas. CPF e matrícula não existem no schema e não são enviados ao banco pelo ETL.
+- Busca por cargo retornou HTTP 200 e 35 registros; similaridade retornou HTTP 200 com limite de 100. O defeito no operador `%` do `pg_trgm` foi corrigido e ganhou teste de regressão.
+- Medições sequenciais de API: 20 amostras por cenário sobre 414.801 registros, sem concorrência; P50/P95 foram registrados em `docs/testes-e-carga.md`. Não há benchmark concorrente nem métricas de CPU/RAM.
 
 ## 5. Branches, PRs e proteção
 
-- PRs #13 a #22 foram integrados por Pull Requests; PR #18 integrou o release, PR #21 integrou o formato oficial e as validações do ETL, e PR #22 atualizou este relatório.
+- PRs #13 a #24 foram integrados por Pull Requests; PR #18 integrou o release, PR #21 integrou o formato oficial e as validações do ETL, PRs #22/#23 atualizaram este relatório, e PR #24 ampliou o parser para a fotografia completa.
 - A proteção de `main` exige o check `backend` e branch atualizada; administradores também estão sujeitos às regras; force push e exclusão estão bloqueados.
 - A exigência de aprovação foi configurada como zero para permitir o fluxo solo. Aprovação independente pode ser adicionada quando houver outro colaborador; não foi simulada.
 
@@ -38,7 +38,7 @@ O enunciado define entrega limite em 13/10/2026. Esta implementação começou e
 2. O dicionário oficial de aposentados não documenta UF; o endpoint retorna `422 UF_UNAVAILABLE` para UF válida e não infere estado pelo órgão.
 3. Carreiras/Cargos não foi relacionado automaticamente a registros individuais.
 4. O ETL é append-only; mudanças ou remoções entre competências não são reconciliadas automaticamente.
-5. A amostra contém 811 linhas, insuficientes para representar a base completa ou validar carga concorrente.
+5. As consultas foram medidas localmente e sequencialmente; o benchmark não valida carga concorrente.
 6. Rate limit em memória não sincroniza instâncias e não foi validado sob concorrência.
 7. A exigência de equipe mínima e a data limite do enunciado continuam não atendidas por este trabalho solo tardio.
 

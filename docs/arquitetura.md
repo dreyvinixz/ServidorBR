@@ -33,7 +33,7 @@ Navegador -> frontend (Nginx + HTML/CSS/JS) -> /api -> backend (Flask + Gunicorn
 - Rate limit reside em memória. Réplicas independentes não compartilham contadores; não é controle distribuído para produção.
 - CSV não é incorporado à imagem nem montado por padrão. O operador fornece o arquivo no momento da importação.
 - O SQL de inicialização é executado pelo entrypoint PostgreSQL somente quando o volume é criado. Atualizações futuras exigem migração explícita.
-- Um volume PostgreSQL novo inicia vazio. O volume local de desenvolvimento contém 811 registros importados da amostra oficial de aposentados 08/2025; CSVs permanecem fora do Git.
+- Um volume PostgreSQL novo inicia vazio. O volume local de desenvolvimento contém 414.801 registros importados das publicações oficiais de aposentados 08/2025; CSVs permanecem fora do Git.
 
 ## Evidência
 

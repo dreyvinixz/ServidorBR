@@ -10,7 +10,7 @@ Quadro operacional das tasks da equipe. Os requisitos, critérios de aceite e es
 
 ## Estado da implementação local - 20/10/2026
 
-- A `main` contém um MVP integrado de API, Compose, PostgreSQL, ETL e interface. O volume local contém 811 registros oficiais de aposentados; testes e medições estão em [`docs/testes-e-carga.md`](docs/testes-e-carga.md).
+- A `main` contém um MVP integrado de API, Compose, PostgreSQL, ETL e interface. O volume local contém 414.801 registros oficiais de aposentados; testes e medições estão em [`docs/testes-e-carga.md`](docs/testes-e-carga.md).
 - As caixas SB-01 a SB-21 abaixo continuam abertas como estado de aceite: nenhuma task deve ser marcada `Done` antes do PR, checks, integração e critérios de aceite exigidos neste documento.
 - O usuário decidiu entregar individualmente; a implementação atual tem autoria Git de uma só conta. O requisito acadêmico de três ou quatro participantes continua não atendido; autoria e histórico dos demais não podem ser presumidos.
 - O prazo do enunciado era 13/10/2026; esta implementação iniciou em 20/10/2026.
@@ -31,7 +31,7 @@ Quadro operacional das tasks da equipe. Os requisitos, critérios de aceite e es
 - [ ] **SB-02** - Analisar dicionários dos datasets e mapear campos - DEV-01 - `docs/SB-02-dicionario-dados`
 - [ ] **SB-03** - Modelar schema e scripts de inicialização PostgreSQL - DEV-01 - `feat/SB-03-schema-postgres`
 - [ ] **SB-04** - Criar `pg_trgm` e índices B-Tree/GIN - DEV-01 - `perf/SB-04-indices-pesquisa`
-- [ ] **SB-05** - Construir ETL, validação e normalização dos CSVs - DEV-01 - `feat/SB-05-etl-importacao`
+- [x] **SB-05** - Construir ETL, validação e normalização dos CSVs - `dreyvinixz` (solo) - PRs [#21](https://github.com/dreyvinixz/ServidorBR/pull/21) e [#24](https://github.com/dreyvinixz/ServidorBR/pull/24); evidência em [`docs/dados-e-etl.md`](docs/dados-e-etl.md)
 - [ ] **SB-06** - Criar Flask, SQLAlchemy, configuração e health check - DEV-02 - `feat/SB-06-api-base-health`
 - [ ] **SB-07** - Implementar busca e filtros combinados - DEV-02 - `feat/SB-07-api-filtros`
 - [ ] **SB-08** - Validar parâmetros, paginação e erros JSON - DEV-02 - `feat/SB-08-validacao-paginacao`

@@ -115,6 +115,21 @@ class EtlTest(unittest.TestCase):
         self.assertNotIn("***123456**", repr(self.database.statements))
         self.assertNotIn("000000001", repr(self.database.statements))
 
+    def test_official_format_ignores_large_unused_fields_and_extra_columns(self):
+        fields = [
+            "João Silva", "***123456**", "000000001", "Ministério Público", "MP", "00000",
+            "Técnico", "A", "001", "00", "001", "VOLUNTÁRIA", "Fundamento", "x" * 150_000,
+            "01012025", "Concurso", "01011990", "4.188,35", "extra",
+        ]
+        with self.path.open("w", encoding="cp1252", newline="") as output:
+            csv.writer(output, delimiter=";").writerow(fields)
+
+        stats = etl.import_file(self.path)
+
+        self.assertEqual((stats["seen"], stats["inserted"], stats["rejected"]), (1, 1, 0))
+        self.assertEqual(self.database.statements[0][1][0], "João Silva")
+        self.assertNotIn("x" * 100, repr(self.database.statements))
+
 
 if __name__ == "__main__":
     unittest.main()
