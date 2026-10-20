@@ -8,6 +8,13 @@ Quadro operacional das tasks da equipe. Os requisitos, critérios de aceite e es
 - DEV-02 - `@dreyvinixz`: Líder técnico, Backend e DevOps/QA
 - DEV-03 - `PREENCHER`: Frontend
 
+## Estado da implementação local - 20/10/2026
+
+- A branch `feat/SB-02-21-mvp-entrega` contém um MVP integrado de API, Compose, PostgreSQL, ETL e interface. Os testes e validações disponíveis estão em [`docs/testes-e-carga.md`](docs/testes-e-carga.md).
+- As caixas SB-01 a SB-21 abaixo continuam abertas como estado de aceite: nenhuma task deve ser marcada `Done` antes do PR, revisão, integração e critérios de aceite exigidos neste documento.
+- A implementação atual foi feita por uma só conta. DEV-03 e a participação real mínima de três pessoas precisam ser confirmadas; autoria e histórico dos demais não podem ser presumidos.
+- O prazo do enunciado era 13/10/2026; esta implementação iniciou em 20/10/2026.
+
 ## Regras rápidas
 
 - Cada task tem uma Issue `SB-XX` e branch própria a partir da branch da sprint.

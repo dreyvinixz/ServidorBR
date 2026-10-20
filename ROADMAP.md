@@ -6,6 +6,8 @@ Este documento é o plano de trabalho oficial do projeto **ServidorBR**. Ele org
 
 > Importante: este plano não substitui o trabalho real. Commits, pull requests e mudanças de status devem ser registrados somente na data em que acontecerem e pela conta GitHub da pessoa responsável. Não criar commits retroativos ou simular atividade anterior.
 
+> Estado de 20/10/2026: há uma implementação MVP local na branch `feat/SB-02-21-mvp-entrega`, documentada em `docs/relatorio-final.md`. O prazo de entrega definido no enunciado (13/10/2026) já passou. O MVP solo não satisfaz a regra de equipe mínima de três pessoas; os itens do roadmap permanecem abertos até revisão/integracão e comprovação de seus critérios.
+
 ## 2. Visão do produto
 
 ServidorBR é uma aplicação web para consulta de dados públicos de servidores ativos e aposentados do Poder Executivo Federal. A pessoa usuária poderá pesquisar por nome, similaridade de nome, cargo/profissão, UF e órgão/instituição, combinar filtros e navegar pelos resultados paginados.

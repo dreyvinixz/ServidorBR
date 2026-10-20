@@ -1,8 +1,8 @@
 # ServidorBR
 
-Aplicação full stack para consulta de dados públicos de servidores aposentados do Poder Executivo Federal, com PostgreSQL, API Flask/Gunicorn e interface web HTML/CSS/JavaScript servida por Nginx.
+Aplicação full stack para consulta de dados públicos de servidores aposentados do Poder Executivo Federal, com PostgreSQL, API Flask/Gunicorn e interface HTML/CSS/JavaScript servida por Nginx.
 
-O MVP local está implementado em 20/10/2026. A base inicia vazia; é necessário obter um CSV oficial e importá-lo. A fonte de aposentados não fornece UF no dicionário consultado, então esse filtro é explicitamente indisponível. O enunciado também exige uma equipe real de pelo menos três integrantes; commits de uma só pessoa não atendem esse item.
+Implementação MVP na branch `feat/SB-02-21-mvp-entrega` em 20/10/2026. A base começa vazia e precisa de um CSV oficial local. A fonte de aposentados não informa UF; o filtro retorna `422 UF_UNAVAILABLE`. O enunciado requer três ou quatro integrantes reais e entrega até 13/10/2026; esse desenvolvimento solo e posterior ao prazo não atende esses critérios acadêmicos.
 
 
 ## Objetivos
@@ -19,7 +19,7 @@ O MVP local está implementado em 20/10/2026. A base inicia vazia; é necessári
 Navegador
     |
     v
-Frontend (React + Vite + Nginx) --- /api ---> Backend (Flask + Gunicorn)
+Frontend (HTML/CSS/JS + Nginx) --- /api ---> Backend (Flask + Gunicorn)
                                                     |
                                                     v
                                       PostgreSQL + pg_trgm (container db)
@@ -30,16 +30,17 @@ Frontend (React + Vite + Nginx) --- /api ---> Backend (Flask + Gunicorn)
 | Camada | Tecnologias |
 | --- | --- |
 | Frontend | HTML, CSS, JavaScript, Nginx |
-| Backend | Python, Flask, Gunicorn, SQLAlchemy |
+| Backend | Python, Flask, Gunicorn, Psycopg |
 | Banco de dados | PostgreSQL, `pg_trgm`, índices B-Tree e GIN |
 | Infraestrutura | Docker, Docker Compose, GitHub Actions |
 | Qualidade | Pytest, Locust, Pull Requests e revisão de código |
 
-## Funcionalidades previstas
+## Funcionalidades implementadas no MVP
 
 - Busca exata por nome;
 - busca parcial e por similaridade, limitada a 100 registros;
-- busca por cargo/profissão, UF e órgão/instituição;
+- busca por cargo/profissão e órgão/instituição;
+- UF validada, mas indisponível na fonte atual (HTTP 422);
 - combinação de filtros;
 - paginação de resultados;
 - apresentação detalhada quando houver um único resultado;
@@ -83,12 +84,12 @@ tipo(escopo): resumo objetivo [SB-XX]
 
 Exemplo: `feat(api): add validated UF filter [SB-07]`.
 
-## Estrutura prevista
+## Estrutura do projeto
 
 ```text
 servidorbr/
-├── backend/              # Flask, Gunicorn, testes e Dockerfile
-├── frontend/             # React/Vite, Nginx e Dockerfile
+├── backend/              # Flask, Gunicorn, ETL, testes e Dockerfile
+├── frontend/             # HTML/CSS/JS, Nginx e Dockerfile
 ├── db/                   # scripts SQL, ETL e arquivos de dados locais
 ├── docs/                 # arquitetura, API, ETL, segurança e relatório
 ├── ROADMAP.md            # planejamento das sprints
@@ -133,7 +134,7 @@ docker compose cp caminho/aposentados.csv backend:/tmp/aposentados.csv
 docker compose exec backend python etl.py /tmp/aposentados.csv
 ```
 
-O ETL lê colunas `Nome`, `Cargo` e `Nome do órgão`, ignora registros sem nome e não persiste CPF ou matrícula. A importação usa uma chave de conteúdo para ignorar duplicatas. Consulte [dados e ETL](docs/dados-e-etl.md).
+O ETL lê colunas `Nome`, `Cargo` e `Nome do órgão`, ignora registros sem nome e não persiste CPF ou matrícula. A chave de importação usa o arquivo e campos de pesquisa para ignorar reimportações idênticas. Consulte [dados e ETL](docs/dados-e-etl.md).
 
 ### API
 
@@ -150,7 +151,7 @@ Nome é exato após normalização; cargo e órgão aceitam trecho. O filtro `uf
 - [Gestão de Pessoas do Executivo Federal - Aposentados](https://dados.gov.br/dados/conjuntos-dados/gestao-de-pessoas-executivo-federal--aposentados)
 - [Gestão de Pessoas do Executivo Federal - Carreiras/Cargos](https://dados.gov.br/dados/conjuntos-dados/gestao-de-pessoas-executivo-federal---carreiras--cargos)
 
-Os arquivos originais não serão enviados ao Git. O processo de análise, tratamento e importação será documentado em `docs/dados-e-etl.md` durante as tasks SB-02 e SB-05.
+Os arquivos originais não devem ser enviados ao Git. O mapeamento e as limitações estão em [docs/dados-e-etl.md](docs/dados-e-etl.md).
 
 ## Licença
 
