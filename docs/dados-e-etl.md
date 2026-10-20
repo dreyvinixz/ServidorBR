@@ -29,11 +29,11 @@ O arquivo de aposentados documenta nome, órgão e cargo, entre outros campos. N
 4. Execute: `docker compose exec backend python etl.py /tmp/aposentados.csv`.
 5. Guarde o resumo da execução e a competência/fonte do arquivo no relatório de entrega.
 
-ETL aceita `;`, `,` ou tabulação e cabeçalhos normalizados equivalentes a `Nome`, `Cargo` e `Nome do órgão`. Registros sem nome são rejeitados. Hash SHA-256 de nome, cargo, órgão e nome do arquivo evita reimportar linhas idênticas do mesmo arquivo. Não faz `TRUNCATE` e não apaga registros anteriores.
+ETL aceita `;`, `,` ou tabulação e cabeçalhos normalizados equivalentes a `Nome`, `Cargo` e `Nome do órgão`. Registros sem nome são rejeitados. Hash SHA-256 de nome, cargo, órgão e nome do arquivo evita reimportar linhas idênticas do mesmo arquivo. Quando a mesma combinação aparece mais de uma vez no CSV, o ETL acrescenta um ordinal de ocorrência ao hash para preservar cada linha e manter a reimportação idempotente. A primeira ocorrência mantém o hash anterior para compatibilidade com registros já importados. Não faz `TRUNCATE` e não apaga registros anteriores.
 
 ## Limitações conhecidas
 
-- Linhas distintas no mesmo arquivo com nome, cargo e órgão idênticos colidem no hash e uma delas é ignorada. Uma chave oficial não sensível ou estratégia de versionamento por competência é necessária para corrigir isso com segurança.
+- A identidade de cada linha idêntica depende da ordem de ocorrência no arquivo; mudanças no conteúdo ou na repetição de linhas podem gerar novas identidades. O ETL é append-only e não reconcilia alterações nem remove registros antigos.
 - A importação é linha a linha e não foi medida com os arquivos completos.
 - Encoding esperado é UTF-8/UTF-8 com BOM; outros encodings precisam de conversão ou suporte adicional.
 - O vínculo entre carreiras/cargos e pessoas não foi estabelecido.

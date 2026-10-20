@@ -24,6 +24,7 @@ def main():
     parser.add_argument("csv_path")
     args = parser.parse_args()
     inserted = rejected = seen = 0
+    occurrences = {}
     with open(args.csv_path, encoding="utf-8-sig", newline="") as source:
         sample = source.read(8192)
         source.seek(0)
@@ -55,9 +56,13 @@ def main():
                         continue
                     cargo = get(row, "Cargo")
                     orgao = get(row, "Nome do órgão", "Nome do orgao")
-                    digest = hashlib.sha256(
-                        "\x1f".join((os.path.basename(args.csv_path), nome, cargo, orgao)).encode("utf-8")
-                    ).hexdigest()
+                    identity = "\x1f".join((os.path.basename(args.csv_path), nome, cargo, orgao))
+                    occurrence = occurrences.get(identity, 0) + 1
+                    occurrences[identity] = occurrence
+                    # Keep the original hash for the first row so existing imports
+                    # remain idempotent. Distinct identical rows get stable ordinals.
+                    material = identity if occurrence == 1 else f"{identity}\x1fduplicate\x1f{occurrence}"
+                    digest = hashlib.sha256(material.encode("utf-8")).hexdigest()
                     cur.execute(
                         "INSERT INTO servidores (nome,nome_norm,cargo,cargo_norm,orgao,orgao_norm,source_hash,source_file) "
                         "VALUES (%s,%s,%s,%s,%s,%s,%s,%s) ON CONFLICT (source_hash) DO NOTHING",
