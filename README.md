@@ -1,10 +1,9 @@
 # ServidorBR
 
-Aplicação full stack para consulta de informações públicas de servidores ativos e aposentados do Poder Executivo Federal.
+Aplicação full stack para consulta de dados públicos de servidores aposentados do Poder Executivo Federal, com PostgreSQL, API Flask/Gunicorn e interface web HTML/CSS/JavaScript servida por Nginx.
 
-O projeto será desenvolvido por uma equipe de três integrantes, com Python/Flask/Gunicorn no backend, PostgreSQL no banco e React no frontend. A execução final utilizará Docker Compose com os serviços `frontend`, `backend` e `db`.
+O MVP local está implementado em 20/10/2026. A base inicia vazia; é necessário obter um CSV oficial e importá-lo. A fonte de aposentados não fornece UF no dicionário consultado, então esse filtro é explicitamente indisponível. O enunciado também exige uma equipe real de pelo menos três integrantes; commits de uma só pessoa não atendem esse item.
 
-> Status atual: planejamento e especificações concluídos. A implementação será iniciada conforme as tasks e sprints documentadas; os comandos de execução abaixo só estarão disponíveis após a conclusão da infraestrutura da Sprint 1.
 
 ## Objetivos
 
@@ -30,7 +29,7 @@ Frontend (React + Vite + Nginx) --- /api ---> Backend (Flask + Gunicorn)
 
 | Camada | Tecnologias |
 | --- | --- |
-| Frontend | React, Vite, HTML, CSS, JavaScript, Nginx |
+| Frontend | HTML, CSS, JavaScript, Nginx |
 | Backend | Python, Flask, Gunicorn, SQLAlchemy |
 | Banco de dados | PostgreSQL, `pg_trgm`, índices B-Tree e GIN |
 | Infraestrutura | Docker, Docker Compose, GitHub Actions |
@@ -99,7 +98,7 @@ servidorbr/
 └── README.md
 ```
 
-## Como executar (quando a Sprint 1 estiver concluída)
+## Como executar
 
 ### Pré-requisitos
 
@@ -120,10 +119,31 @@ URLs previstas:
 
 | Serviço | Endereço |
 | --- | --- |
-| Frontend | `http://localhost:3000` |
-| API | `http://localhost:8000/api/health` |
+| Frontend e proxy da API | `http://localhost:3000` |
+| Saúde da API | `http://localhost:3000/api/health` |
 
-> As portas definitivas serão confirmadas na task SB-10. Não versione o arquivo `.env`, senhas ou dados pessoais.
+As credenciais de `.env.example` são apenas para desenvolvimento local. Troque-as antes de qualquer ambiente compartilhado. Não versione `.env` nem arquivos CSV.
+
+### Importar uma base oficial
+
+Coloque o CSV obtido de fonte oficial fora do Git e execute após iniciar os containers:
+
+```bash
+docker compose cp caminho/aposentados.csv backend:/tmp/aposentados.csv
+docker compose exec backend python etl.py /tmp/aposentados.csv
+```
+
+O ETL lê colunas `Nome`, `Cargo` e `Nome do órgão`, ignora registros sem nome e não persiste CPF ou matrícula. A importação usa uma chave de conteúdo para ignorar duplicatas. Consulte [dados e ETL](docs/dados-e-etl.md).
+
+### API
+
+```text
+GET /api/servidores?nome=JOAO%20DA%20SILVA
+GET /api/servidores?cargo=PROFESSOR&orgao=UNIVERSIDADE&page=1&per_page=25
+GET /api/servidores?similar=JOAO%25SILVA&limit=100
+```
+
+Nome é exato após normalização; cargo e órgão aceitam trecho. O filtro `uf` retorna `422 UF_UNAVAILABLE`, pois não está disponível na fonte escolhida. Veja o contrato completo em [docs/api.md](docs/api.md).
 
 ## Fontes de dados
 
