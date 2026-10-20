@@ -33,8 +33,8 @@ Navegador -> frontend (Nginx + HTML/CSS/JS) -> /api -> backend (Flask + Gunicorn
 - Rate limit reside em memória. Réplicas independentes não compartilham contadores; não é controle distribuído para produção.
 - CSV não é incorporado à imagem nem montado por padrão. O operador fornece o arquivo no momento da importação.
 - O SQL de inicialização é executado pelo entrypoint PostgreSQL somente quando o volume é criado. Atualizações futuras exigem migração explícita.
-- A base inicia vazia. Nenhum CSV ou registro foi incluído no repositório.
+- Um volume PostgreSQL novo inicia vazio. O volume local de desenvolvimento contém 811 registros importados da amostra oficial de aposentados 08/2025; CSVs permanecem fora do Git.
 
 ## Evidência
 
-Validações locais em 20/10/2026: `docker compose config -q` passou; `docker compose up --build -d` iniciou os três containers; o backend e o banco reportaram estado saudável; `GET /api/health` respondeu `{"database":"ok","status":"ok"}` pelo proxy. A interface retornou HTTP 200. A busca de exemplo respondeu sem registros porque nenhum CSV foi importado.
+Validações locais em 20/10/2026: `docker compose config -q` passou; os três containers iniciaram; backend e banco reportaram estado saudável; `GET /api/health` respondeu `{"database":"ok","status":"ok"}` pelo proxy. A interface retornou HTTP 200. Com a amostra importada, buscas por cargo e similaridade retornaram HTTP 200; contagens e latências estão em `docs/testes-e-carga.md`.

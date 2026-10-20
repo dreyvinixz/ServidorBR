@@ -50,6 +50,23 @@ class ApiTest(unittest.TestCase):
         self.assertNotIn(payload, query)
         self.assertEqual(params["cargo"], f"%{normalize(payload)}%")
 
+    @patch("app.db")
+    def test_similarity_escapes_trigram_operator_for_psycopg(self, connect):
+        conn = MagicMock()
+        connect.return_value.__enter__.return_value = conn
+        count = MagicMock()
+        count.fetchone.return_value = {"n": 1}
+        records = MagicMock()
+        records.fetchall.return_value = [{"id": 1, "nome": "MARIA SILVA", "cargo": None, "orgao": None, "uf": None}]
+        conn.execute.side_effect = [count, records]
+
+        response = self.client.get("/api/servidores", query_string={"similar": "MARIA"})
+
+        self.assertEqual(response.status_code, 200)
+        query, params = conn.execute.call_args_list[0].args
+        self.assertIn("nome_norm %% %(similar)s", query)
+        self.assertEqual(params["similar"], "MARIA")
+
 
 if __name__ == "__main__":
     unittest.main()

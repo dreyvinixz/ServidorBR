@@ -25,9 +25,9 @@ git switch -c feat/SB-07-api-filtros
 1. Envie a branch e abra um PR para a branch da sprint correta.
 2. Use o modelo de PR e vincule a Issue com `Closes #numero`.
 3. Solicite revisão de alguém que não seja o autor.
-4. O revisor deve usar o checklist de PR; ao menos uma aprovação é obrigatória.
-5. Após a aprovação e os checks passarem, mescle na branch da sprint.
-6. Somente no encerramento da sprint abra o PR `sprint/... -> main`, também revisado por outra pessoa.
+4. Peça revisão independente quando outro colaborador estiver disponível; não simule aprovação em fluxo solo.
+5. Com o check obrigatório `backend` aprovado, integre o PR em `main`, que mantém a proteção de branch ativa.
+6. Se a equipe voltar ao fluxo de sprint, abra primeiro PRs para a branch da sprint e integre a sprint em `main` ao final.
 
 ## Colunas do quadro
 

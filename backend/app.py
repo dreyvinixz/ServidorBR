@@ -89,7 +89,7 @@ def search():
             return error("INVALID_QUERY", "similar deve ter entre 2 e 120 caracteres.", 400)
         params["similar"] = similar.replace("%", "")
         params["pattern"] = f"%{similar}%"
-        filters.extend(["nome_norm % %(similar)s", "nome_norm LIKE %(pattern)s"])
+        filters.extend(["nome_norm %% %(similar)s", "nome_norm LIKE %(pattern)s"])
     where = " WHERE " + " AND ".join(filters) if filters else ""
     page_size = min(per_page, limit) if similar is not None else per_page
     params.update(limit=page_size, offset=(page - 1) * page_size)

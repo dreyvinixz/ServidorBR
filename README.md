@@ -2,7 +2,7 @@
 
 Aplicação full stack para consulta de dados públicos de servidores aposentados do Poder Executivo Federal, com PostgreSQL, API Flask/Gunicorn e interface HTML/CSS/JavaScript servida por Nginx.
 
-Implementação MVP na branch `feat/SB-02-21-mvp-entrega` em 20/10/2026. A base começa vazia e precisa de um CSV oficial local. A fonte de aposentados não informa UF; o filtro retorna `422 UF_UNAVAILABLE`. O enunciado requer três ou quatro integrantes reais e entrega até 13/10/2026; esse desenvolvimento solo e posterior ao prazo não atende esses critérios acadêmicos.
+MVP integrado à `main` em 20/10/2026. Uma instalação nova começa vazia e precisa importar um CSV oficial; o volume local de desenvolvimento contém uma amostra de 811 aposentados da competência 08/2025. A fonte de aposentados não informa UF; o filtro retorna `422 UF_UNAVAILABLE`. O enunciado requer três ou quatro integrantes reais e entrega até 13/10/2026; esse desenvolvimento solo e posterior ao prazo não atende esses critérios acadêmicos.
 
 
 ## Objetivos
@@ -60,21 +60,22 @@ O plano prevê duas sprints de 15 dias. As tarefas devem ser executadas e regist
 
 ## Fluxo de desenvolvimento
 
-Cada sprint terá uma branch de integração distinta:
+Branches do fluxo solo atual:
 
 ```text
 main
-  ├── sprint/01-fundacao-api
-  └── sprint/02-experiencia-entrega
+  └── feat/SB-XX-nome-da-task -> PR -> main
 ```
 
-Cada task será desenvolvida em uma branch criada a partir da branch da sprint, como `feat/SB-07-api-filtros`. Todo Pull Request deverá:
+No fluxo solo atual, cada task é desenvolvida em uma branch criada a partir de `main`, como `feat/SB-07-api-filtros`, e integrada por PR para `main`. Todo Pull Request deverá:
 
 1. estar vinculado a uma Issue `SB-XX`;
-2. apontar para a branch da sprint correspondente;
-3. ter pelo menos uma aprovação de revisor diferente do autor;
-4. ter testes relevantes aprovados;
+2. descrever validação e limitações;
+3. ter o check obrigatório `backend` aprovado;
+4. receber revisão independente quando houver outro colaborador disponível;
 5. atualizar a documentação quando necessário.
+
+A proteção atual de `main` não exige aprovação, pois o projeto está sendo desenvolvido por uma só pessoa; force push e exclusão continuam bloqueados.
 
 Padrão de commit:
 
@@ -134,7 +135,7 @@ docker compose cp caminho/aposentados.csv backend:/tmp/aposentados.csv
 docker compose exec backend python etl.py /tmp/aposentados.csv
 ```
 
-O ETL lê colunas `Nome`, `Cargo` e `Nome do órgão`, ignora registros sem nome e não persiste CPF ou matrícula. A chave de importação usa o arquivo e campos de pesquisa para ignorar reimportações idênticas. Consulte [dados e ETL](docs/dados-e-etl.md).
+O ETL lê CSVs com cabeçalho e o formato oficial de aposentados sem cabeçalho (18 colunas, CP1252), mapeando nome, cargo e órgão. Ignora registros sem nome, não persiste CPF ou matrícula, preserva linhas legítimas repetidas e mantém reimportações idempotentes. Consulte [dados e ETL](docs/dados-e-etl.md).
 
 ### API
 
