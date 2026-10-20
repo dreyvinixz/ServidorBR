@@ -1,10 +1,9 @@
 # ServidorBR
 
-Aplicação full stack para consulta de informações públicas de servidores ativos e aposentados do Poder Executivo Federal.
+Aplicação full stack para consulta de dados públicos de servidores aposentados do Poder Executivo Federal, com PostgreSQL, API Flask/Gunicorn e interface HTML/CSS/JavaScript servida por Nginx.
 
-O projeto será desenvolvido por uma equipe de três integrantes, com Python/Flask/Gunicorn no backend, PostgreSQL no banco e React no frontend. A execução final utilizará Docker Compose com os serviços `frontend`, `backend` e `db`.
+Implementação MVP na branch `feat/SB-02-21-mvp-entrega` em 20/10/2026. A base começa vazia e precisa de um CSV oficial local. A fonte de aposentados não informa UF; o filtro retorna `422 UF_UNAVAILABLE`. O enunciado requer três ou quatro integrantes reais e entrega até 13/10/2026; esse desenvolvimento solo e posterior ao prazo não atende esses critérios acadêmicos.
 
-> Status atual: planejamento e especificações concluídos. A implementação será iniciada conforme as tasks e sprints documentadas; os comandos de execução abaixo só estarão disponíveis após a conclusão da infraestrutura da Sprint 1.
 
 ## Objetivos
 
@@ -20,7 +19,7 @@ O projeto será desenvolvido por uma equipe de três integrantes, com Python/Fla
 Navegador
     |
     v
-Frontend (React + Vite + Nginx) --- /api ---> Backend (Flask + Gunicorn)
+Frontend (HTML/CSS/JS + Nginx) --- /api ---> Backend (Flask + Gunicorn)
                                                     |
                                                     v
                                       PostgreSQL + pg_trgm (container db)
@@ -30,17 +29,18 @@ Frontend (React + Vite + Nginx) --- /api ---> Backend (Flask + Gunicorn)
 
 | Camada | Tecnologias |
 | --- | --- |
-| Frontend | React, Vite, HTML, CSS, JavaScript, Nginx |
-| Backend | Python, Flask, Gunicorn, SQLAlchemy |
+| Frontend | HTML, CSS, JavaScript, Nginx |
+| Backend | Python, Flask, Gunicorn, Psycopg |
 | Banco de dados | PostgreSQL, `pg_trgm`, índices B-Tree e GIN |
 | Infraestrutura | Docker, Docker Compose, GitHub Actions |
 | Qualidade | Pytest, Locust, Pull Requests e revisão de código |
 
-## Funcionalidades previstas
+## Funcionalidades implementadas no MVP
 
 - Busca exata por nome;
 - busca parcial e por similaridade, limitada a 100 registros;
-- busca por cargo/profissão, UF e órgão/instituição;
+- busca por cargo/profissão e órgão/instituição;
+- UF validada, mas indisponível na fonte atual (HTTP 422);
 - combinação de filtros;
 - paginação de resultados;
 - apresentação detalhada quando houver um único resultado;
@@ -84,12 +84,12 @@ tipo(escopo): resumo objetivo [SB-XX]
 
 Exemplo: `feat(api): add validated UF filter [SB-07]`.
 
-## Estrutura prevista
+## Estrutura do projeto
 
 ```text
 servidorbr/
-├── backend/              # Flask, Gunicorn, testes e Dockerfile
-├── frontend/             # React/Vite, Nginx e Dockerfile
+├── backend/              # Flask, Gunicorn, ETL, testes e Dockerfile
+├── frontend/             # HTML/CSS/JS, Nginx e Dockerfile
 ├── db/                   # scripts SQL, ETL e arquivos de dados locais
 ├── docs/                 # arquitetura, API, ETL, segurança e relatório
 ├── ROADMAP.md            # planejamento das sprints
@@ -99,7 +99,7 @@ servidorbr/
 └── README.md
 ```
 
-## Como executar (quando a Sprint 1 estiver concluída)
+## Como executar
 
 ### Pré-requisitos
 
@@ -120,17 +120,38 @@ URLs previstas:
 
 | Serviço | Endereço |
 | --- | --- |
-| Frontend | `http://localhost:3000` |
-| API | `http://localhost:8000/api/health` |
+| Frontend e proxy da API | `http://localhost:3000` |
+| Saúde da API | `http://localhost:3000/api/health` |
 
-> As portas definitivas serão confirmadas na task SB-10. Não versione o arquivo `.env`, senhas ou dados pessoais.
+As credenciais de `.env.example` são apenas para desenvolvimento local. Troque-as antes de qualquer ambiente compartilhado. Não versione `.env` nem arquivos CSV.
+
+### Importar uma base oficial
+
+Coloque o CSV obtido de fonte oficial fora do Git e execute após iniciar os containers:
+
+```bash
+docker compose cp caminho/aposentados.csv backend:/tmp/aposentados.csv
+docker compose exec backend python etl.py /tmp/aposentados.csv
+```
+
+O ETL lê colunas `Nome`, `Cargo` e `Nome do órgão`, ignora registros sem nome e não persiste CPF ou matrícula. A chave de importação usa o arquivo e campos de pesquisa para ignorar reimportações idênticas. Consulte [dados e ETL](docs/dados-e-etl.md).
+
+### API
+
+```text
+GET /api/servidores?nome=JOAO%20DA%20SILVA
+GET /api/servidores?cargo=PROFESSOR&orgao=UNIVERSIDADE&page=1&per_page=25
+GET /api/servidores?similar=JOAO%25SILVA&limit=100
+```
+
+Nome é exato após normalização; cargo e órgão aceitam trecho. O filtro `uf` retorna `422 UF_UNAVAILABLE`, pois não está disponível na fonte escolhida. Veja o contrato completo em [docs/api.md](docs/api.md).
 
 ## Fontes de dados
 
 - [Gestão de Pessoas do Executivo Federal - Aposentados](https://dados.gov.br/dados/conjuntos-dados/gestao-de-pessoas-executivo-federal--aposentados)
 - [Gestão de Pessoas do Executivo Federal - Carreiras/Cargos](https://dados.gov.br/dados/conjuntos-dados/gestao-de-pessoas-executivo-federal---carreiras--cargos)
 
-Os arquivos originais não serão enviados ao Git. O processo de análise, tratamento e importação será documentado em `docs/dados-e-etl.md` durante as tasks SB-02 e SB-05.
+Os arquivos originais não devem ser enviados ao Git. O mapeamento e as limitações estão em [docs/dados-e-etl.md](docs/dados-e-etl.md).
 
 ## Licença
 
