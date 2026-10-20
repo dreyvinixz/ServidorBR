@@ -37,4 +37,4 @@ Navegador -> frontend (Nginx + HTML/CSS/JS) -> /api -> backend (Flask + Gunicorn
 
 ## Evidência
 
-`docker compose config -q` foi validado localmente. Ainda é necessário executar a stack completa com Docker e importar um CSV oficial para comprovar a integração com dados reais.
+Validações locais em 20/10/2026: `docker compose config -q` passou; `docker compose up --build -d` iniciou os três containers; o backend e o banco reportaram estado saudável; `GET /api/health` respondeu `{"database":"ok","status":"ok"}` pelo proxy. A interface retornou HTTP 200. A busca de exemplo respondeu sem registros porque nenhum CSV foi importado.

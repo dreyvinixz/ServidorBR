@@ -21,11 +21,21 @@ O enunciado define entrega limite em 13/10/2026. Esta implementação começou e
 
 - `docker compose config -q`: passou em 20/10/2026.
 - `python -m unittest discover -s backend -p 'test_*.py'`: 6 testes passaram em 20/10/2026.
-- Docker Compose completo: ainda não registrado como iniciado/saudável neste relatório.
+- `docker compose up --build -d`: os três serviços iniciaram; banco e backend ficaram saudáveis.
+- `GET /api/health` pelo proxy Nginx: HTTP 200, banco `ok`.
+- Página inicial: HTTP 200; busca de exemplo: HTTP 200 com zero registros.
 - Importação dos arquivos oficiais: não executada; nenhum CSV foi disponibilizado localmente.
 - Carga e percentis: não medidos.
 
-## 5. Limitações conhecidas
+## 5. Branches, PRs e proteção
+
+- PRs de infraestrutura, API/ETL, frontend e documentação foram abertos separadamente e mesclados às branches de sprint: [#13](https://github.com/dreyvinixz/ServidorBR/pull/13), [#14](https://github.com/dreyvinixz/ServidorBR/pull/14), [#15](https://github.com/dreyvinixz/ServidorBR/pull/15), [#16](https://github.com/dreyvinixz/ServidorBR/pull/16).
+- PR [#17](https://github.com/dreyvinixz/ServidorBR/pull/17) integra Sprint 1 em Sprint 2; checks `backend` passaram, aguardando merge.
+- PR de release [#18](https://github.com/dreyvinixz/ServidorBR/pull/18) está em draft e depende da integração #17.
+- `main` está protegida: uma aprovação independente, check obrigatório `backend`, branch atualizada antes de merge, administradores incluídos, force push e exclusão bloqueados.
+- `sprint/01-fundacao-api` registra 31 commits em 20/10/2026. Os commits desta implementação usam uma única autoria Git; eles não substituem o requisito de três integrantes nem criam histórico diário de cada pessoa.
+
+## 6. Limitações conhecidas
 
 1. Fonte de aposentados não documenta UF; endpoint retorna `422 UF_UNAVAILABLE` para UF válida.
 2. Base inicia vazia e cobre apenas aposentados, não servidores ativos.
@@ -34,6 +44,6 @@ O enunciado define entrega limite em 13/10/2026. Esta implementação começou e
 5. Rate limit em memória não sincroniza instâncias e não foi validado sob carga.
 6. A exigência de equipe mínima e a data limite do enunciado continuam não atendidas por este trabalho solo tardio.
 
-## 6. Conclusão
+## 7. Conclusão
 
-O código e a documentação técnica constituem uma base executável para demonstração após importar um CSV. Não declarar a entrega acadêmica como concluída: faltam evidência da equipe exigida, adequação ao prazo, dados oficiais de teste, teste integrado dos containers e medições de carga.
+O código e a documentação técnica constituem uma base executável para demonstração. Não declarar a entrega acadêmica como concluída: faltam evidência da equipe exigida, adequação ao prazo, dados oficiais de teste e medições de carga. O PR de release continua sujeito à aprovação independente exigida por `main`.
