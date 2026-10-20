@@ -11,7 +11,7 @@ O MVP reúne frontend estático, API Flask/Gunicorn, PostgreSQL com índices `pg
 
 O enunciado requer de três a quatro integrantes e distribuição real de tarefas/commits. `TASK.md` registra dois nomes e um integrante como `PREENCHER`; a autoria Git desta implementação é somente `dreyvinixz`. Não atribuir autoria, datas ou trabalho a integrantes sem evidência. A composição precisa ser confirmada pelo grupo antes da submissão.
 
-O `main` remoto contém 43 commits após integração dos PRs. O diário disponível em `docs/burndown.csv` termina em 26/09/2026 e não representa o trabalho executado em outubro; não foi reconstruído retroativamente.
+O `main` remoto contém 45 commits após integração dos PRs #13 a #21. A Issue [SB-05](https://github.com/dreyvinixz/ServidorBR/issues/12) foi fechada com a entrega do ETL oficial. O diário disponível em `docs/burndown.csv` termina em 26/09/2026 e não representa o trabalho executado em outubro; não foi reconstruído retroativamente.
 
 ## 3. Prazo e sprints
 
@@ -28,7 +28,7 @@ O enunciado define entrega limite em 13/10/2026. Esta implementação começou e
 
 ## 5. Branches, PRs e proteção
 
-- PRs #13 a #20 foram integrados por Pull Requests; PR #18 integrou o release em `main`.
+- PRs #13 a #21 foram integrados por Pull Requests; PR #18 integrou o release e PR #21 integrou o formato oficial e as validações do ETL em `main`.
 - A proteção de `main` exige o check `backend` e branch atualizada; administradores também estão sujeitos às regras; force push e exclusão estão bloqueados.
 - A exigência de aprovação foi configurada como zero para permitir o fluxo solo. Aprovação independente pode ser adicionada quando houver outro colaborador; não foi simulada.
 
