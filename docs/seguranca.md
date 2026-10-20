@@ -1,29 +1,21 @@
 # Segurança - ServidorBR
 
-## Controles previstos
+## Controles no código
 
-| Controle | Estratégia | Task |
-| --- | --- | --- |
-| SQL injection | Queries parametrizadas; nunca concatenar entrada do usuário em SQL | SB-07 e SB-11 |
-| Validação | Validar campos aceitos, tamanho, tipo, UF, paginação e limites | SB-08 |
-| Limite de resultados | `per_page` e `limit` com máximo de 100 | SB-08 e SB-12 |
-| Rate limiting | Limitar excesso de requisições por cliente e responder 429 | SB-09 |
-| Timeout | Interromper consulta demorada e responder 503 sem travar workers | SB-09 |
-| Segredos | Usar `.env`; ignorar credenciais no Git | SB-10 |
-| Erros | Não expor stack trace, strings de conexão ou dados internos | SB-09 |
+| Risco | Controle | Limitação |
+|---|---|---|
+| SQL injection | Valores enviados como parâmetros Psycopg; fragmentos SQL são constantes do backend | Revisar qualquer consulta nova |
+| Strings e filtros inválidos | Lista de parâmetros permitidos; limites de tamanho; validação de paginação/UF | Cargo e órgão são campos livres, sem catálogo de valores |
+| Sobrecarga | Flask-Limiter: 120 solicitações/min por IP; Gunicorn com 2 workers/4 threads | Contadores em memória e isolados por processo/instância |
+| Busca longa | PostgreSQL `statement_timeout=8000ms`; Gunicorn `timeout=15s` | Limites iniciais sem medição de carga real |
+| Erro interno | JSON genérico ao cliente; exceções registradas no log do servidor | Controlar acesso e retenção dos logs |
+| Dados pessoais | ETL descarta CPF e matrícula; API retorna nome, cargo, órgão e UF nullable | Arquivo CSV original ainda fica sob responsabilidade do operador |
+| Credenciais | `.env` ignorado e `.env.example` versionado | Senha padrão de Compose é apenas para desenvolvimento local |
 
-## Casos que serão testados
+## UF ausente
 
-```text
-' OR 1=1 --
-'; DROP TABLE servidores; --
-```
+UF válida retorna `422 UF_UNAVAILABLE`. A fonte consultada não traz UF e nenhuma localização é inferida por nome do órgão.
 
-Essas entradas devem ser tratadas como dados de busca, nunca como comandos SQL.
+## Para ambiente compartilhado
 
-## Evidências pendentes
-
-- [ ] Validações implementadas e cobertas por teste.
-- [ ] Testes de SQL injection executados.
-- [ ] Rate limiting e timeout verificados.
-- [ ] Revisão de segredos antes da entrega.
+Trocar senhas padrão, usar armazenamento compartilhado para rate limit, ativar HTTPS e configurar proxy confiável antes de publicar o serviço. O rate limit atual não substitui controles de borda em produção.

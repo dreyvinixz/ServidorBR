@@ -1,62 +1,53 @@
 # API - ServidorBR
 
-**Base URL prevista:** `http://localhost:8000/api`  
-**Formato de resposta:** JSON  
-**Status:** contrato inicial; confirmar ao concluir SB-06 a SB-12.
+Base URL local: `http://localhost:3000/api` (através do proxy Nginx). Todas as respostas usam JSON UTF-8.
 
-## Health check
+## Saúde
+
+`GET /health` verifica a conectividade com o PostgreSQL.
+
+Sucesso HTTP 200: `{"status":"ok","database":"ok"}`. Falha de banco: HTTP 503, `DATABASE_UNAVAILABLE`.
+
+## Pesquisa
+
+`GET /servidores` combina filtros informados com `AND`.
+
+| Parâmetro | Regra |
+|---|---|
+| `nome` | Exato após normalização; 1-120 caracteres |
+| `similar` | Trigramas + padrão parcial; 2-120 caracteres |
+| `cargo` | Contém trecho; 1-120 caracteres |
+| `orgao` | Contém trecho; 1-160 caracteres |
+| `uf` | UF inválida -> 400; UF válida -> 422 `UF_UNAVAILABLE`, pois o arquivo de aposentados não contém UF |
+| `page` | Inteiro de 1 a 1.000.000; padrão 1; página além do total retorna 400 quando há resultados |
+| `per_page` | Inteiro entre 1 e 100; padrão 25 |
+| `limit` | Inteiro entre 1 e 100; só é aceito com `similar`; padrão 100 |
+
+Exemplos:
 
 ```http
-GET /api/health
+GET /api/servidores?nome=JOAO%20DA%20SILVA
+GET /api/servidores?cargo=PROFESSOR&orgao=UNIVERSIDADE&per_page=25
+GET /api/servidores?similar=JOAO%25SILVA&limit=100
 ```
 
-Resposta esperada:
+Resposta:
 
 ```json
-{
-  "status": "ok"
-}
+{"data":[{"id":1,"nome":"JOAO DA SILVA","cargo":"PROFESSOR","orgao":"UNIVERSIDADE FEDERAL","uf":null}],"pagination":{"page":1,"per_page":25,"total":1,"pages":1},"query_time_ms":4.2}
 ```
 
-## Pesquisa de servidores
+Na busca similar, `total` e páginas são limitados ao `limit`; `per_page` define o tamanho da página dentro desse teto.
 
-```http
-GET /api/servidores
-```
+## Erros
 
-| Parâmetro | Regra prevista | Exemplo |
-| --- | --- | --- |
-| `nome` | Texto de 1 a 120 caracteres | `JOAO DA SILVA` |
-| `similar` | Texto parcial de 2 a 120 caracteres | `JOAO%SILVA` |
-| `cargo` | Texto de 1 a 120 caracteres | `PROFESSOR` |
-| `uf` | UF brasileira válida | `RS` |
-| `orgao` | Texto de 1 a 160 caracteres | `UNIVERSIDADE` |
-| `page` | Inteiro maior ou igual a 1 | `2` |
-| `per_page` | Inteiro entre 1 e 100 | `25` |
-| `limit` | Inteiro entre 1 e 100 para similaridade | `100` |
+| HTTP | Códigos/situações |
+|---:|---|
+| 400 | `UNKNOWN_PARAMETER`, `INVALID_QUERY`, `INVALID_PAGINATION`, `INVALID_PAGE`, `INVALID_UF` |
+| 404 | `NOT_FOUND` |
+| 422 | `UF_UNAVAILABLE` |
+| 429 | `RATE_LIMITED` |
+| 503 | `DATABASE_UNAVAILABLE`, `QUERY_TIMEOUT` |
+| 500 | `INTERNAL_ERROR`, sem detalhes internos |
 
-Exemplo de resposta de sucesso:
-
-```json
-{
-  "data": [],
-  "pagination": {"page": 1, "per_page": 25, "total": 0, "pages": 0},
-  "query_time_ms": 0
-}
-```
-
-## Erros previstos
-
-| Situação | HTTP | Estrutura |
-| --- | ---: | --- |
-| Parâmetro inválido | 400 | `{"error":{"code":"...","message":"..."}}` |
-| Rota inexistente | 404 | JSON de erro |
-| Rate limit excedido | 429 | JSON de erro |
-| Timeout de consulta | 503 | JSON de erro |
-| Falha interna | 500 | JSON seguro, sem detalhes internos |
-
-## Evidências pendentes
-
-- [ ] Endpoints implementados e validados.
-- [ ] Exemplos atualizados com respostas reais.
-- [ ] Contrato revisado após integração do frontend.
+Consultas usam parâmetros vinculados pelo Psycopg. Nomes de colunas e fragmentos de ordenação são constantes definidas no backend. CPF e matrícula não são retornados.
