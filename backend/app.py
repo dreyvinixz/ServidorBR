@@ -49,6 +49,8 @@ def search():
         if uf not in VALID_UF:
             return error("INVALID_UF", "UF inválida.", 400)
         return error("UF_UNAVAILABLE", "A fonte de aposentados utilizada não fornece UF.", 422)
+    if "limit" in request.args and "similar" not in request.args:
+        return error("INVALID_QUERY", "limit só pode ser usado com similar.", 400)
 
     def integer(key, default, maximum):
         raw = request.args.get(key, str(default))
@@ -95,6 +97,11 @@ def search():
     try:
         with db() as conn:
             total = conn.execute(f"SELECT count(*) AS n FROM servidores{where}", params).fetchone()["n"]
+            if similar is not None:
+                total = min(total, limit)
+            pages = (total + page_size - 1) // page_size
+            if total and page > pages:
+                return error("INVALID_PAGE", "Página inexistente.", 400)
             order = "similarity(nome_norm, %(similar)s) DESC, nome_norm" if similar is not None else "nome_norm"
             rows = conn.execute(
                 f"SELECT id,nome,cargo,orgao,uf FROM servidores{where} ORDER BY {order} LIMIT %(limit)s OFFSET %(offset)s", params
@@ -104,7 +111,7 @@ def search():
     except psycopg.Error:
         app.logger.exception("Falha na consulta de servidores")
         return error("DATABASE_UNAVAILABLE", "Não foi possível consultar o banco de dados.", 503)
-    return jsonify(data=rows, pagination={"page": page, "per_page": page_size, "total": total, "pages": (total + page_size - 1) // page_size}, query_time_ms=round((time.perf_counter() - started) * 1000, 2))
+    return jsonify(data=rows, pagination={"page": page, "per_page": page_size, "total": total, "pages": pages}, query_time_ms=round((time.perf_counter() - started) * 1000, 2))
 
 
 @app.errorhandler(429)
