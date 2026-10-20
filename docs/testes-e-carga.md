@@ -13,7 +13,7 @@ Seis casos no host passaram em 20/10/2026: normalização, parâmetros desconhec
 
 ## Validação de configuração
 
-`docker compose config -q` passou localmente em 20/10/2026. Isso valida a sintaxe/resolução do Compose, não inicia containers nem comprova comunicação com PostgreSQL, API ou interface.
+`docker compose config -q` passou localmente em 20/10/2026. Também foi executado `docker compose up --build -d`; os containers `db`, `backend` e `frontend` iniciaram, o banco/backend ficaram saudáveis e a página retornou HTTP 200. `GET /api/health` pelo Nginx retornou `{"database":"ok","status":"ok"}`. Uma busca funcional retornou HTTP 200 e lista vazia, pois não foi importado um CSV. Essa validação comprova a conexão sem dados, mas não uma busca com registros reais.
 
 ## Carga
 
