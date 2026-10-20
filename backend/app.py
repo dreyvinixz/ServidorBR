@@ -5,10 +5,13 @@ import time
 
 import psycopg
 from flask import Flask, jsonify, request
+from flask_limiter import Limiter
+from flask_limiter.util import get_remote_address
 from psycopg.rows import dict_row
 
 DATABASE_URL = os.environ.get("DATABASE_URL", "postgresql://servidorbr:local-dev-only@localhost:5432/servidorbr")
 app = Flask(__name__)
+limiter = Limiter(get_remote_address, app=app, default_limits=[os.environ.get("RATE_LIMIT", "120 per minute")], storage_uri="memory://")
 ALLOWED = {"nome", "cargo", "orgao", "uf", "similar", "page", "per_page", "limit"}
 VALID_UF = set("AC AL AP AM BA CE DF GO MA MT MS MG PA PB PR PE PI RJ RN RS RO RR SC SP SE TO ES".split())
 
@@ -19,7 +22,7 @@ def normalize(value):
 
 
 def db():
-    return psycopg.connect(DATABASE_URL, row_factory=dict_row, connect_timeout=3)
+    return psycopg.connect(DATABASE_URL, row_factory=dict_row, connect_timeout=3, options="-c statement_timeout=8000")
 
 
 @app.get("/api/health")
@@ -41,6 +44,11 @@ def search():
     unknown = set(request.args) - ALLOWED
     if unknown:
         return error("UNKNOWN_PARAMETER", "Parâmetro de busca desconhecido.", 400)
+    if "uf" in request.args:
+        uf = request.args["uf"].strip().upper()
+        if uf not in VALID_UF:
+            return error("INVALID_UF", "UF inválida.", 400)
+        return error("UF_UNAVAILABLE", "A fonte de aposentados utilizada não fornece UF.", 422)
 
     def integer(key, default, maximum):
         raw = request.args.get(key, str(default))
@@ -84,10 +92,32 @@ def search():
     page_size = min(per_page, limit) if similar is not None else per_page
     params.update(limit=page_size, offset=(page - 1) * page_size)
     started = time.perf_counter()
-    with db() as conn:
-        total = conn.execute(f"SELECT count(*) AS n FROM servidores{where}", params).fetchone()["n"]
-        order = "similarity(nome_norm, %(similar)s) DESC, nome_norm" if similar is not None else "nome_norm"
-        rows = conn.execute(
-            f"SELECT id,nome,cargo,orgao,uf FROM servidores{where} ORDER BY {order} LIMIT %(limit)s OFFSET %(offset)s", params
-        ).fetchall()
+    try:
+        with db() as conn:
+            total = conn.execute(f"SELECT count(*) AS n FROM servidores{where}", params).fetchone()["n"]
+            order = "similarity(nome_norm, %(similar)s) DESC, nome_norm" if similar is not None else "nome_norm"
+            rows = conn.execute(
+                f"SELECT id,nome,cargo,orgao,uf FROM servidores{where} ORDER BY {order} LIMIT %(limit)s OFFSET %(offset)s", params
+            ).fetchall()
+    except psycopg.errors.QueryCanceled:
+        return error("QUERY_TIMEOUT", "A consulta excedeu o tempo limite.", 503)
+    except psycopg.Error:
+        app.logger.exception("Falha na consulta de servidores")
+        return error("DATABASE_UNAVAILABLE", "Não foi possível consultar o banco de dados.", 503)
     return jsonify(data=rows, pagination={"page": page, "per_page": page_size, "total": total, "pages": (total + page_size - 1) // page_size}, query_time_ms=round((time.perf_counter() - started) * 1000, 2))
+
+
+@app.errorhandler(429)
+def too_many(_):
+    return error("RATE_LIMITED", "Limite de requisições excedido. Tente novamente em instantes.", 429)
+
+
+@app.errorhandler(404)
+def not_found(_):
+    return error("NOT_FOUND", "Rota não encontrada.", 404)
+
+
+@app.errorhandler(Exception)
+def unexpected_error(exc):
+    app.logger.exception("Falha inesperada")
+    return error("INTERNAL_ERROR", "Não foi possível concluir a solicitação.", 500)
