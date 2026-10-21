@@ -5,13 +5,21 @@
 | Conjunto | Documento/repositório | Uso |
 |---|---|---|
 | Gestão de Pessoas do Executivo Federal - Aposentados | [Dicionário oficial de dados](https://repositorio.dados.gov.br/segrt/1.20180829-DadosRecursos-Aposentados.pdf) | Fonte de registros de aposentados civis; contém nome, CPF mascarado, matrícula, órgão, cargo e outros atributos. |
-| Gestão de Pessoas do Executivo Federal - Carreiras/Cargos | [Repositório oficial SEGRt](https://repositorio.dados.gov.br/segrt/) | Referência de nomenclatura; ainda não há integração/vínculo automático com a tabela de pessoas. |
+| Gestão de Pessoas do Executivo Federal - Carreiras/Cargos | [Dicionário oficial de dados](https://repositorio.dados.gov.br/segrt/2.20190709-DadosRecursos-Carreiras.pdf) e [repositório oficial SEGRt](https://repositorio.dados.gov.br/segrt/) | Declara dados cadastrais de servidores ativos e inclui UF da UPAG de vinculação; ainda não há integração com a API. |
 
 ## Fontes oficiais importadas
 
 Foram usadas duas publicações da competência 08/2025 no [repositório oficial SEGRt](https://repositorio.dados.gov.br/segrt/): a extração mensal [`APOSENTADOS_082025.csv`](https://repositorio.dados.gov.br/segrt/APOSENTADOS_082025.csv) e a fotografia completa [`APOSENTADOS_082025_FULL.csv`](https://repositorio.dados.gov.br/segrt/APOSENTADOS_082025_FULL.csv). O índice lista os arquivos com 327 KB e 163 MB, respectivamente, ambos datados de 24/12/2025.
 
 O [dicionário oficial](https://repositorio.dados.gov.br/segrt/1.20180829-DadosRecursos-Aposentados.pdf) descreve 18 campos. Os CSVs não têm cabeçalho; a leitura posicional usa `Nome` (coluna 1), `Nome do órgão` (coluna 4) e `Cargo` (coluna 7). CPF e matrícula nunca entram na consulta de inserção, no hash de identidade ou no schema PostgreSQL. Os arquivos usam separador `;` e CP1252. A fotografia completa tem 127 registros com colunas adicionais e um campo de 280.630 caracteres numa coluna legal não pesquisada; o ETL lê as três colunas necessárias e tolera esses extras.
+
+## Regra de precedência da competência
+
+O [índice oficial](https://repositorio.dados.gov.br/segrt/) publica `APOSENTADOS_082025.csv` (327 KB) e `APOSENTADOS_082025_FULL.csv` (163 MB), ambos datados de 24/12/2025. O dicionário chama o conjunto de aposentados de `MÊS/ANO`, mas não explica a diferença nem fornece uma chave não sensível para conciliar as duas publicações.
+
+**Regra operacional do ServidorBR:** quando houver publicação `_FULL` para uma competência, ela é a fonte canônica da busca ampla de aposentados. O arquivo mensal da mesma competência não é somado ao `_FULL` e não é deduplicado por nome; sem uma chave adequada, isso poderia misturar snapshots ou pessoas homônimas. Se uma competência não tiver `_FULL`, a carga deve ser identificada como cobertura limitada e documentada, sem presumir que o arquivo mensal representa o cadastro completo.
+
+A carga local existente continua contendo os dois arquivos (414.801 linhas) como fixture exploratória e reproduz os benchmarks já publicados; não foi apagada nesta alteração documental. Uma futura reconstrução canônica de 08/2025 deve carregar somente os 413.990 registros do `_FULL`.
 
 | Arquivo | Bytes locais | Linhas lidas | Inseridas | Duplicadas | Rejeitadas | Tempo | Vazão |
 |---|---:|---:|---:|---:|---:|---:|---:|
@@ -30,7 +38,7 @@ A segunda execução da extração mensal inseriu 0 e reconheceu 811 duplicatas 
 | `CPF`, `Matrícula do Servidor` | Não armazenados | Nenhum | Descartados pelo ETL |
 | UF | `uf` nullable | Filtro previsto | O dicionário consultado não contém esse atributo; não é inferido |
 
-O arquivo de aposentados documenta nome, órgão e cargo, entre outros campos. Não documenta UF. A aplicação sinaliza a limitação e não deduz estado a partir do órgão.
+O dicionário de aposentados documenta nome, órgão e cargo, entre outros campos, mas não UF. O dicionário oficial de Carreiras/Cargos declara dados de ativos e lista `UF da UPAG de vinculação` (até duas posições), além de nome, CPF mascarado, carreira, cargo, órgão, mês de referência e remuneração. Essa UF representa a unidade pagadora de vinculação, não residência. Uma futura integração deve descartar CPF, documentar essa semântica e separar registros ativos dos aposentados antes de expor filtro de situação ou UF. Até então, a aplicação sinaliza a indisponibilidade e não deduz estado a partir do órgão.
 
 ## Importação local
 
