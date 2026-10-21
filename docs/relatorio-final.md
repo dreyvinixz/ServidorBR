@@ -1,4 +1,4 @@
-# Relatório de estado do projeto - ServidorBR
+# Relatório final do projeto - ServidorBR
 
 **Atualizado em:** 20/10/2026  
 **Estado:** reparo FULL, filtros pesquisáveis e aplicativo desktop integrados à `main` pelos PRs #46 e #47.
@@ -20,7 +20,7 @@ O enunciado define entrega limite em 13/10/2026. Esta implementação começou e
 ## 4. Evidências técnicas
 
 - `docker compose config -q`: passou em 20/10/2026.
-- `python -m unittest discover -s backend -p 'test_*.py'`: 15 testes passaram após a mudança do `COUNT`, incluindo API, ETL, limites da contagem, formato oficial CP1252, campo extralongo e reimportação idempotente.
+- `python -m unittest discover -s backend -p 'test_*.py'`: 16 testes passaram após a mudança do `COUNT` e a cobertura de `/api/opcoes`, incluindo API, ETL, limites da contagem, formato oficial CP1252, campo extralongo e reimportação idempotente.
 - Os três serviços iniciaram; `db` e `backend` ficaram saudáveis; página e `GET /api/health` retornaram HTTP 200.
 - Fontes oficiais `APOSENTADOS_082025.csv` e `APOSENTADOS_082025_FULL.csv`: 811 e 413.990 linhas inseridas, respectivamente; banco com 414.801 hashes únicos. A reimportação da extração mensal inseriu 0 e reconheceu 811 duplicatas. CPF e matrícula não existem no schema e não são enviados ao banco pelo ETL.
 - Busca por cargo retornou HTTP 200 e 35 registros; similaridade retornou HTTP 200 com limite de 100. O defeito no operador `%` do `pg_trgm` foi corrigido e ganhou teste de regressão.
