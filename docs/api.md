@@ -8,6 +8,12 @@ Base URL local: `http://localhost:3000/api` (através do proxy Nginx). Todas as 
 
 Sucesso HTTP 200: `{"status":"ok","database":"ok"}`. Falha de banco: HTTP 503, `DATABASE_UNAVAILABLE`.
 
+## Opções de busca
+
+`GET /opcoes` retorna os valores distintos e não vazios de `cargo` e `orgao` que existem na tabela. A interface usa esses valores nos seletores pesquisáveis, evitando sugerir opções ausentes da base.
+
+Resposta: `{"cargos":["ANALISTA"],"orgaos":["MINISTERIO"]}`. Falha de banco: HTTP 503, `DATABASE_UNAVAILABLE`.
+
 ## Pesquisa
 
 `GET /servidores` combina filtros informados com `AND`.

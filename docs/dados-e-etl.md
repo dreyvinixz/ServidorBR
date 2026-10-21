@@ -21,7 +21,7 @@ O [índice oficial](https://repositorio.dados.gov.br/segrt/) publica `APOSENTADO
 
 A carga local existente continua contendo os dois arquivos (414.801 linhas) como fixture exploratória e reproduz os benchmarks já publicados; não foi apagada nesta alteração documental. Uma futura reconstrução canônica de 08/2025 deve carregar somente os 413.990 registros do `_FULL`.
 
-**Auditoria de 21/10/2026:** a tabela local tem 811 registros mensais com `cargo` e `orgao` preenchidos, mas os 413.990 registros de `_FULL` estão com ambos nulos. O cabeçalho `_FULL` usa `Cargo emprego` e `Orgao`; o ETL anterior reconhecia `Nome`, mas não esses dois aliases. O mapeamento do importador foi corrigido. A base já carregada ainda requer uma atualização controlada para recuperar esses campos; até essa atualização, a interface não consegue exibi-los para registros originados de `_FULL`.
+**Auditoria e reparo de 20/10/2026:** o cabeçalho `_FULL` usa `Cargo emprego` e `Orgao`; o ETL anterior reconhecia `Nome`, mas não esses dois aliases. O mapeamento do importador foi corrigido. A base carregada foi atualizada pela chave `(source_file, source_hash)`, com backup permanente dos quatro campos originais e sem inserir ou excluir registros. A tabela resultante contém 414.801 linhas: 413.990 FULL, das quais 413.920 têm cargo e 413.990 têm órgão, e 811 mensais inalteradas. O procedimento e a reversão estão documentados em [reparo-campos-full-202508.md](reparo-campos-full-202508.md).
 
 | Arquivo | Bytes locais | Linhas lidas | Inseridas | Duplicadas | Rejeitadas | Tempo | Vazão |
 |---|---:|---:|---:|---:|---:|---:|---:|
