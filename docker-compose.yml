@@ -17,6 +17,8 @@ services:
 
   backend:
     build: ./backend
+    ports:
+      - "127.0.0.1:${API_PORT:-8000}:8000"
     environment:
       DATABASE_URL: postgresql://${POSTGRES_USER:-servidorbr}:${POSTGRES_PASSWORD:-local-dev-only}@db:5432/${POSTGRES_DB:-servidorbr}
       RATE_LIMIT: ${RATE_LIMIT:-120 per minute}
