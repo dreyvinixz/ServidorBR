@@ -1,20 +1,14 @@
 <!doctype html>
 <html lang="pt-BR">
-<head>
-  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-  <meta name="theme-color" content="#102b3f"><title>ServidorBR | Consulta pública</title>
-  <link rel="stylesheet" href="style.css">
-</head>
-<body>
-  <header class="top"><a class="brand" href="/"><span class="mark">SB</span><span>Servidor<span class="light">BR</span><small>PORTAL DE CONSULTA PÚBLICA</small></span></a><span class="tag">DADOS ABERTOS · EXECUTIVO FEDERAL</span></header>
-  <main>
-    <section class="intro"><div class="eyebrow">PESQUISA TRANSPARENTE</div><h1>Encontre informações<br><em>com clareza.</em></h1><p>Consulte registros públicos de servidores aposentados por nome, cargo ou órgão.</p></section>
-    <section class="panel"><form id="search-form">
-      <div class="fields"><label class="wide">Nome do servidor<input name="nome" maxlength="120" placeholder="Ex.: Maria Silva"></label><label>Cargo ou profissão<input name="cargo" maxlength="120" placeholder="Ex.: Analista"></label><label>Órgão ou instituição<input name="orgao" maxlength="160" placeholder="Ex.: Ministério"></label>
-      <details class="advanced wide"><summary>Busca por similaridade e paginação</summary><div class="fields inner"><label>Nome aproximado<input name="similar" maxlength="120" placeholder="Ex.: Maria%Silva"></label><label>Resultados por página<select name="per_page"><option>10</option><option selected>25</option><option>50</option><option>100</option></select></label></div></details></div>
-      <div class="actions"><button class="submit" type="submit">Buscar registros <span>→</span></button><button class="reset" type="reset">Limpar</button><span class="source-note">A UF não está disponível nesta fonte.</span></div>
-    </form></section>
-    <section id="results" aria-live="polite"><div class="empty"><span class="empty-icon">⌕</span><h2>Sua busca começa aqui</h2><p>Informe um nome, cargo ou órgão para consultar a base disponível.</p></div></section>
-    <footer><span>Fonte: dados.gov.br · Gestão de Pessoas — Aposentados</span><a href="https://dados.gov.br/dados/conjuntos-dados/gestao-de-pessoas-executivo-federal--aposentados" target="_blank" rel="noreferrer">Sobre os dados ↗</a></footer>
-  </main><script src="app.js"></script>
-</body></html>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#f5f7f4" />
+    <meta name="description" content="Consulte registros públicos de servidores aposentados do Executivo Federal." />
+    <title>ServidorBR — Consulta pública</title>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.jsx"></script>
+  </body>
+</html>

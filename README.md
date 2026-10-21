@@ -1,6 +1,6 @@
 # ServidorBR
 
-Aplicação full stack para consulta de dados públicos de servidores aposentados do Poder Executivo Federal, com PostgreSQL, API Flask/Gunicorn e interface HTML/CSS/JavaScript servida por Nginx.
+Aplicação full stack para consulta de dados públicos de servidores aposentados do Poder Executivo Federal, com PostgreSQL, API Flask/Gunicorn e interface React com Vite e Tailwind CSS 4, servida por Nginx.
 
 MVP integrado à `main` em 20/10/2026. Uma instalação nova começa vazia e precisa importar um CSV oficial; o volume local de desenvolvimento contém 414.801 registros de aposentados da competência 08/2025. A fonte de aposentados não informa UF; o filtro retorna `422 UF_UNAVAILABLE`. O enunciado requer três ou quatro integrantes reais e entrega até 13/10/2026; esse desenvolvimento solo e posterior ao prazo não atende esses critérios acadêmicos.
 
@@ -19,7 +19,7 @@ MVP integrado à `main` em 20/10/2026. Uma instalação nova começa vazia e pre
 Navegador
     |
     v
-Frontend (HTML/CSS/JS + Nginx) --- /api ---> Backend (Flask + Gunicorn)
+Frontend (React + Vite + Tailwind CSS 4, build Node + Nginx) --- /api ---> Backend (Flask + Gunicorn)
                                                     |
                                                     v
                                       PostgreSQL + pg_trgm (container db)
@@ -29,7 +29,7 @@ Frontend (HTML/CSS/JS + Nginx) --- /api ---> Backend (Flask + Gunicorn)
 
 | Camada | Tecnologias |
 | --- | --- |
-| Frontend | HTML, CSS, JavaScript, Nginx |
+| Frontend | React, Vite, Tailwind CSS 4, Node.js, Nginx |
 | Backend | Python, Flask, Gunicorn, Psycopg |
 | Banco de dados | PostgreSQL, `pg_trgm`, índices B-Tree e GIN |
 | Infraestrutura | Docker, Docker Compose, GitHub Actions |
@@ -43,7 +43,7 @@ Frontend (HTML/CSS/JS + Nginx) --- /api ---> Backend (Flask + Gunicorn)
 - UF validada, mas indisponível na fonte atual (HTTP 422);
 - combinação de filtros;
 - paginação de resultados;
-- apresentação detalhada quando houver um único resultado;
+- cartões responsivos para resultados e paginação;
 - endpoint de saúde: `GET /api/health`;
 - respostas JSON e erros HTTP padronizados;
 - validação de parâmetros, proteção contra SQL injection, rate limiting e timeout.
@@ -125,6 +125,18 @@ URLs previstas:
 | Saúde da API | `http://localhost:3000/api/health` |
 
 As credenciais de `.env.example` são apenas para desenvolvimento local. Troque-as antes de qualquer ambiente compartilhado. Não versione `.env` nem arquivos CSV.
+
+### Desenvolvimento do frontend
+
+O Docker Compose compila o frontend com Node e serve os arquivos otimizados pelo Nginx. Para iniciar o servidor de desenvolvimento Vite localmente, use Node.js 22 ou superior e disponibilize a API em `http://localhost:8000`:
+
+```bash
+cd frontend
+npm ci
+npm run dev
+```
+
+Se a API estiver em outro endereço, configure `API_PROXY_TARGET` antes de iniciar o Vite. O servidor de desenvolvimento encaminha `/api` para essa URL; em produção, o proxy continua no Nginx.
 
 ### Importar uma base oficial
 
