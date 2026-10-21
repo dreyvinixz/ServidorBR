@@ -1,7 +1,7 @@
 # Relatório de estado do projeto - ServidorBR
 
 **Atualizado em:** 20/10/2026  
-**Estado:** MVP integrado até PR #43; reparo dos campos FULL e busca com listas pesquisáveis validados na branch `fix/full-fields-backfill-search-feedback`; aplicativo desktop adicional em desenvolvimento.
+**Estado:** reparo dos campos FULL e busca com listas pesquisáveis integrados pelo PR #46; aplicativo desktop adicional em desenvolvimento na branch `feat/SB-29-desktop-app`.
 
 ## 1. Escopo disponível
 
@@ -35,8 +35,8 @@ O enunciado define entrega limite em 13/10/2026. Esta implementação começou e
 ## 5. Branches, PRs e proteção
 
 - PRs #13 a #34 foram integrados por Pull Requests; PR #21 integrou o formato oficial e as validações do ETL, PR #24 ampliou o parser para a fotografia completa, PR #26 documentou a análise de consulta, PR #28 fixou a regra de fonte, PR #30 adicionou o benchmark concorrente, PR #32 atualizou este relatório, e PR #34 limitou o `COUNT` da busca por similaridade e repetiu as medições.
-- PRs #36, #37, #39, #41 e #43 integraram o frontend React/Tailwind, documentação de status, proxy Vite, opções avançadas e aliases do FULL. O trabalho de restauração de dados e listas pesquisáveis está na Issue #44 e aguarda PR/checks/integração.
-- A Issue #45 acompanha o aplicativo desktop para o ponto adicional de 1,0; o desenvolvimento e o pacote Windows ainda estão pendentes.
+- PRs #36, #37, #39, #41 e #43 integraram o frontend React/Tailwind, documentação de status, proxy Vite, opções avançadas e aliases do FULL. O PR #46 integrou o reparo de dados e listas pesquisáveis; seus checks `backend` e `frontend` passaram.
+- A Issue #45 acompanha o aplicativo desktop para o ponto adicional de 1,0. O pacote Windows e sua validação ainda estão pendentes.
 - A proteção de `main` exige o check `backend` e branch atualizada; administradores também estão sujeitos às regras; force push e exclusão estão bloqueados.
 - A exigência de aprovação foi configurada como zero para permitir o fluxo solo. Aprovação independente pode ser adicionada quando houver outro colaborador; não foi simulada.
 
@@ -52,4 +52,4 @@ O enunciado define entrega limite em 13/10/2026. Esta implementação começou e
 
 ## 7. Conclusão
 
-O código, os testes e a documentação permitem reproduzir a execução local com uma amostra oficial. Para fechar o repositório ainda faltam integrar a Issue #44, entregar e integrar o aplicativo desktop da Issue #45 e concluir a inspeção visual quando houver navegador disponível. Não declarar a entrega acadêmica como concluída: faltam evidência da equipe exigida e adequação ao prazo.
+O código, os testes e a documentação permitem reproduzir a execução local com uma amostra oficial. Para fechar o repositório ainda faltam empacotar e validar o aplicativo desktop da Issue #45 e concluir uma inspeção visual no navegador quando este estiver disponível. Não declarar a entrega acadêmica como concluída: faltam evidência da equipe exigida e adequação ao prazo.

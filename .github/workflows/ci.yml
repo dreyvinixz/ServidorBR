@@ -29,3 +29,26 @@ jobs:
       - run: python -m unittest discover -s backend -p 'test_*.py'
         env:
           PYTHONPATH: backend
+
+  desktop:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+          cache: npm
+          cache-dependency-path: |
+            frontend/package-lock.json
+            desktop/package-lock.json
+      - run: npm ci
+        working-directory: frontend
+      - run: npm ci
+        working-directory: desktop
+      - run: npm run package:win
+        working-directory: desktop
+      - uses: actions/upload-artifact@v4
+        with:
+          name: servidorbr-desktop-win-x64
+          path: desktop/release/ServidorBR-win32-x64/
+          if-no-files-found: error

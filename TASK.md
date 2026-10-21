@@ -8,10 +8,10 @@ Quadro operacional das tasks da equipe. Os requisitos, critérios de aceite e es
 
 ## Estado da implementação local - 20/10/2026
 
-- A `main` está em `9b45d9e`; o commit local `5d077a6` está na branch `fix/full-fields-backfill-search-feedback` e será integrado por PR vinculado à Issue [#44](https://github.com/dreyvinixz/ServidorBR/issues/44).
+- A `main` está em `212ec69`; o reparo FULL e os filtros pesquisáveis foram integrados pelo PR [#46](https://github.com/dreyvinixz/ServidorBR/pull/46), vinculado à Issue [#44](https://github.com/dreyvinixz/ServidorBR/issues/44).
 - O banco local contém 414.801 registros. O reparo FULL foi validado com backup reversível de 413.990 linhas; veja [`docs/reparo-campos-full-202508.md`](docs/reparo-campos-full-202508.md).
 - A interface oferece 1.479 cargos e 183 órgãos distintos por seletores pesquisáveis; `npm run build` e os 15 testes do backend passaram. A inspeção visual automatizada ficou pendente porque não havia navegador disponível no ambiente.
-- O app desktop para o ponto adicional está em desenvolvimento na Issue [#45](https://github.com/dreyvinixz/ServidorBR/issues/45); ainda não conte como concluído.
+- O app desktop para o ponto adicional está em desenvolvimento na branch `feat/SB-29-desktop-app`, Issue [#45](https://github.com/dreyvinixz/ServidorBR/issues/45); ainda não conte como concluído.
 - A autoria do trabalho é individual. O requisito acadêmico de três ou quatro participantes continua não atendido; não atribuir autoria ou histórico a outras pessoas.
 - O prazo do enunciado era 13/10/2026; esta implementação iniciou em 20/10/2026.
 
@@ -59,5 +59,5 @@ Quadro operacional das tasks da equipe. Os requisitos, critérios de aceite e es
 - [x] **SB-22** - Modernizar frontend com React, Vite e Tailwind CSS 4 - `dreyvinixz` (solo) - Issue [#35](https://github.com/dreyvinixz/ServidorBR/issues/35), PR [#36](https://github.com/dreyvinixz/ServidorBR/pull/36)
 - [x] **SB-24** - Melhorar usabilidade das opções avançadas de busca - `dreyvinixz` (solo) - Issue [#40](https://github.com/dreyvinixz/ServidorBR/issues/40), PR [#41](https://github.com/dreyvinixz/ServidorBR/pull/41)
 - [x] **SB-25** - Corrigir mapeamento dos cabeçalhos do CSV FULL - `dreyvinixz` (solo) - Issue [#42](https://github.com/dreyvinixz/ServidorBR/issues/42), PR [#43](https://github.com/dreyvinixz/ServidorBR/pull/43)
-- [x] **SB-28** - Recuperar cargo/órgão no FULL e melhorar filtros pesquisáveis - `dreyvinixz` (solo) - Issue [#44](https://github.com/dreyvinixz/ServidorBR/issues/44); PR em preparação na branch `fix/full-fields-backfill-search-feedback`
+- [x] **SB-28** - Recuperar cargo/órgão no FULL e melhorar filtros pesquisáveis - `dreyvinixz` (solo) - Issue [#44](https://github.com/dreyvinixz/ServidorBR/issues/44), PR [#46](https://github.com/dreyvinixz/ServidorBR/pull/46)
 - [ ] **SB-29** - Aplicativo desktop com interface gráfica (ponto adicional) - `dreyvinixz` (solo) - Issue [#45](https://github.com/dreyvinixz/ServidorBR/issues/45)

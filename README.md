@@ -139,6 +139,10 @@ npm run dev
 
 O Compose publica a API apenas em `127.0.0.1:8000`; o proxy do Vite encaminha `/api` para esse endereço. Se você mudar a porta da API com `API_PORT`, ajuste também `API_PROXY_TARGET` antes de iniciar o Vite. Em produção, o proxy continua no Nginx.
 
+### Aplicativo desktop para Windows
+
+O desktop abre a mesma interface em uma janela Electron e usa a API local. Primeiro inicie o banco e backend com `docker compose up -d db backend`. Depois, em `desktop`, execute `npm ci` e `npm start`. Para gerar a pasta portátil com `ServidorBR.exe`, use `npm run package:win`; os detalhes estão em [`desktop/README.md`](desktop/README.md) e [`docs/aplicativo-desktop.md`](docs/aplicativo-desktop.md). O pacote não inclui PostgreSQL nem dados; o backend precisa estar ativo.
+
 ### Importar uma base oficial
 
 Coloque o CSV obtido de fonte oficial fora do Git e execute após iniciar os containers:
