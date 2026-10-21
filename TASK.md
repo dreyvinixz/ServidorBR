@@ -8,7 +8,7 @@ Quadro operacional das tasks da equipe. Os requisitos, critérios de aceite e es
 
 ## Estado integrado em `main` - 20/10/2026
 
-- A `main` está em `96dfd30`; o reparo FULL e os filtros pesquisáveis foram integrados pelo PR [#46](https://github.com/dreyvinixz/ServidorBR/pull/46), vinculado à Issue [#44](https://github.com/dreyvinixz/ServidorBR/issues/44).
+- A `main` contém o reparo FULL e os filtros pesquisáveis integrados pelo PR [#46](https://github.com/dreyvinixz/ServidorBR/pull/46), vinculado à Issue [#44](https://github.com/dreyvinixz/ServidorBR/issues/44), além do aplicativo desktop do PR [#47](https://github.com/dreyvinixz/ServidorBR/pull/47).
 - O banco local contém 414.801 registros. O reparo FULL foi validado com backup reversível de 413.990 linhas; veja [`docs/reparo-campos-full-202508.md`](docs/reparo-campos-full-202508.md).
 - A interface oferece 1.479 cargos e 183 órgãos distintos por seletores pesquisáveis; o build web e os 16 testes do backend passaram. A inspeção visual automatizada pelo navegador continua pendente porque o ambiente não oferece navegador.
 - O aplicativo desktop da Issue [#45](https://github.com/dreyvinixz/ServidorBR/issues/45) foi integrado pelo PR [#47](https://github.com/dreyvinixz/ServidorBR/pull/47); os checks `backend`, `frontend` e `desktop` passaram e a issue foi fechada.
