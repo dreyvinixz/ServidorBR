@@ -40,6 +40,88 @@ function SearchField({ label, hint, name, icon, placeholder, maxLength, value, o
   );
 }
 
+function SearchableSelect({ label, hint, name, icon, options, value, onSelect, placeholder, loading, disabled }) {
+  const [open, setOpen] = useState(false);
+  const [term, setTerm] = useState('');
+  const rootRef = useRef(null);
+  const inputRef = useRef(null);
+  const listId = `options-${name}`;
+  const normalizedTerm = term.normalize('NFKD').replace(/[\u0300-\u036f]/g, '').toLocaleLowerCase('pt-BR').trim();
+  const visibleOptions = options
+    .filter((option) => option.normalize('NFKD').replace(/[\u0300-\u036f]/g, '').toLocaleLowerCase('pt-BR').includes(normalizedTerm))
+    .slice(0, 60);
+
+  useEffect(() => {
+    if (open) inputRef.current?.focus();
+  }, [open]);
+
+  useEffect(() => {
+    if (!open) return undefined;
+    function closeOutside(event) {
+      if (!rootRef.current?.contains(event.target)) setOpen(false);
+    }
+    document.addEventListener('pointerdown', closeOutside);
+    return () => document.removeEventListener('pointerdown', closeOutside);
+  }, [open]);
+
+  function choose(option) {
+    onSelect(name, option);
+    setTerm('');
+    setOpen(false);
+  }
+
+  return (
+    <div ref={rootRef} className="relative min-w-0">
+      <span className="mb-2 flex items-center gap-2 text-sm font-semibold text-slate-700">
+        <Icon name={icon} className="size-4 text-slate-400" />{label}
+      </span>
+      <button
+        type="button"
+        className="field-input field-combobox cursor-pointer disabled:cursor-not-allowed disabled:bg-slate-50 disabled:text-slate-400"
+        aria-haspopup="listbox"
+        aria-expanded={open}
+        aria-controls={listId}
+        aria-label={`${label}: ${value || placeholder}`}
+        disabled={disabled}
+        onClick={() => setOpen((current) => !current)}
+      >
+        <span className={value ? 'truncate text-slate-800' : 'truncate text-slate-400'}>{value || (loading ? 'Carregando opções…' : placeholder)}</span>
+        <Icon name="chevron" className={`size-4 shrink-0 text-slate-500 transition ${open ? 'rotate-180' : ''}`} />
+      </button>
+      {open && (
+        <div className="absolute z-30 mt-2 w-full rounded-2xl border border-slate-200 bg-white p-3 shadow-xl shadow-slate-900/10">
+          <input
+            ref={inputRef}
+            value={term}
+            onChange={(event) => setTerm(event.target.value)}
+            onKeyDown={(event) => { if (event.key === 'Escape') setOpen(false); }}
+            className="field-input"
+            placeholder={`Buscar ${label.toLocaleLowerCase('pt-BR')}…`}
+            aria-label={`Filtrar opções de ${label.toLocaleLowerCase('pt-BR')}`}
+            autoComplete="off"
+          />
+          <ul id={listId} role="listbox" aria-label={label} className="mt-2 max-h-64 overflow-y-auto">
+            {visibleOptions.length ? visibleOptions.map((option) => (
+              <li key={option} role="presentation">
+                <button
+                  type="button"
+                  role="option"
+                  aria-selected={option === value}
+                  onClick={() => choose(option)}
+                  className="w-full rounded-lg px-3 py-2 text-left text-sm leading-5 text-slate-700 hover:bg-emerald-50 hover:text-emerald-900 focus-visible:bg-emerald-50 focus-visible:outline-none"
+                >{option}</button>
+              </li>
+            )) : <li className="px-3 py-3 text-sm leading-5 text-slate-500">Nenhuma opção encontrada. Confira a digitação.</li>}
+          </ul>
+          {visibleOptions.length === 60 && <p className="px-3 pt-2 text-xs text-slate-500">Refine a busca para ver outras opções.</p>}
+          {value && <button type="button" onClick={() => { onSelect(name, ''); setTerm(''); setOpen(false); }} className="mt-2 w-full border-t border-slate-100 px-3 pt-3 text-left text-xs font-semibold text-emerald-800">Remover seleção</button>}
+        </div>
+      )}
+      {hint && <span className="mt-2 block text-xs leading-5 text-slate-500">{hint}</span>}
+    </div>
+  );
+}
+
 function ResultCard({ record, index }) {
   return (
     <article className="result-card animate-rise" style={{ animationDelay: `${Math.min(index * 45, 270)}ms` }}>
@@ -50,8 +132,8 @@ function ResultCard({ record, index }) {
         <div className="min-w-0 flex-1">
           <h3 className="break-words text-base font-bold tracking-tight text-slate-900">{record.nome}</h3>
           <div className="mt-3 flex flex-wrap gap-2">
-            {record.cargo && <span className="result-tag"><Icon name="briefcase" className="size-3.5" />{record.cargo}</span>}
-            {record.orgao && <span className="result-tag"><Icon name="building" className="size-3.5" />{record.orgao}</span>}
+            <span className="result-tag"><Icon name="briefcase" className="size-3.5" />{record.cargo || 'Cargo não informado pela fonte'}</span>
+            <span className="result-tag"><Icon name="building" className="size-3.5" />{record.orgao || 'Órgão não informado pela fonte'}</span>
           </div>
         </div>
         <span className="hidden rounded-full bg-slate-50 px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.14em] text-slate-400 sm:inline-flex">Registro público</span>
@@ -79,13 +161,35 @@ export default function App() {
   const [result, setResult] = useState(null);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [options, setOptions] = useState({ cargos: [], orgaos: [] });
+  const [optionsLoading, setOptionsLoading] = useState(true);
+  const [optionsError, setOptionsError] = useState(false);
   const activeRequest = useRef(null);
   const resultsRef = useRef(null);
 
   useEffect(() => () => activeRequest.current?.abort(), []);
 
+  useEffect(() => {
+    const controller = new AbortController();
+    fetch('/api/opcoes', { signal: controller.signal })
+      .then(async (response) => {
+        const body = await response.json();
+        if (!response.ok) throw new Error(body.error?.message || 'Falha ao carregar opções.');
+        setOptions({ cargos: body.cargos || [], orgaos: body.orgaos || [] });
+      })
+      .catch((requestError) => {
+        if (requestError.name !== 'AbortError') setOptionsError(true);
+      })
+      .finally(() => { if (!controller.signal.aborted) setOptionsLoading(false); });
+    return () => controller.abort();
+  }, []);
+
   function updateField(event) {
     const { name, value } = event.target;
+    setFilters((current) => ({ ...current, [name]: value }));
+  }
+
+  function selectOption(name, value) {
     setFilters((current) => ({ ...current, [name]: value }));
   }
 
@@ -181,9 +285,10 @@ export default function App() {
               <div className="lg:col-span-2">
                 <SearchField label="Nome do servidor" name="nome" icon="person" placeholder="Digite o nome completo" hint="Busca exata pelo nome informado." maxLength={120} value={filters.nome} onChange={updateField} />
               </div>
-              <SearchField label="Cargo ou profissão" name="cargo" icon="briefcase" placeholder="Ex.: Analista" maxLength={120} value={filters.cargo} onChange={updateField} />
-              <SearchField label="Órgão ou instituição" name="orgao" icon="building" placeholder="Ex.: Ministério" maxLength={160} value={filters.orgao} onChange={updateField} />
+              <SearchableSelect label="Cargo ou profissão" name="cargo" icon="briefcase" options={options.cargos} value={filters.cargo} onSelect={selectOption} placeholder="Selecione um cargo" loading={optionsLoading} disabled={optionsLoading || optionsError || !options.cargos.length} hint="Escolha entre os cargos existentes na base; digite para filtrar a lista." />
+              <SearchableSelect label="Órgão ou instituição" name="orgao" icon="building" options={options.orgaos} value={filters.orgao} onSelect={selectOption} placeholder="Selecione um órgão" loading={optionsLoading} disabled={optionsLoading || optionsError || !options.orgaos.length} hint="A lista mostra somente órgãos presentes nos registros." />
             </div>
+            {optionsError && <p role="status" className="mt-3 text-xs text-amber-800">Não foi possível carregar as listas agora. Atualize a página para tentar novamente.</p>}
             <details className="advanced-search mt-6">
               <summary className="advanced-summary">
                 <span className="advanced-icon"><Icon name="sliders" className="size-5" /></span>
@@ -216,7 +321,7 @@ export default function App() {
             </details>
             <div className="mt-6 flex flex-col-reverse gap-3 border-t border-slate-100 pt-5 sm:flex-row sm:items-center">
               <button type="button" onClick={clearSearch} className="inline-flex min-h-12 items-center justify-center gap-2 rounded-xl px-5 text-sm font-semibold text-slate-600 transition hover:bg-slate-100 hover:text-slate-900 focus-visible:outline-2 focus-visible:outline-emerald-700">Limpar filtros <Icon name="close" className="size-4" /></button>
-              <span className="flex-1 text-center text-xs leading-5 text-slate-500 sm:text-left">A fonte consultada não disponibiliza o campo de UF.</span>
+              <span className="flex-1 text-center text-xs leading-5 text-slate-500 sm:text-left">Os filtros informados são combinados. A fonte não disponibiliza UF.</span>
               <button type="submit" disabled={loading} className="primary-button inline-flex min-h-12 items-center justify-center gap-2.5 rounded-xl px-6 text-sm font-bold text-white transition focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-700 disabled:cursor-wait disabled:opacity-70">
                 {loading ? <span className="size-4 animate-spin rounded-full border-2 border-white/35 border-t-white" /> : <Icon name="search" className="size-4" />}
                 {loading ? 'Buscando…' : 'Buscar registros'} {!loading && <Icon name="arrow" className="size-4" />}
@@ -237,7 +342,12 @@ export default function App() {
           {error ? (
             <div role="alert" className="rounded-2xl border border-rose-200 bg-rose-50 px-5 py-4 text-sm font-medium text-rose-800">{error}</div>
           ) : loading && !result ? <EmptyState searching /> : !result ? <EmptyState searching={false} /> : result.data.length === 0 ? (
-            <div className="empty-state rounded-2xl border border-slate-200 bg-white"><div className="mb-5 flex size-14 items-center justify-center rounded-2xl bg-slate-100 text-slate-500"><Icon name="search" className="size-6" /></div><h2 className="text-lg font-bold tracking-tight text-slate-900">Nenhum registro encontrado</h2><p className="mt-2 max-w-md text-sm leading-6 text-slate-500">Tente ajustar os termos ou combinar outros filtros.</p></div>
+            <div className="empty-state rounded-2xl border border-slate-200 bg-white">
+              <div className="mb-5 flex size-14 items-center justify-center rounded-2xl bg-amber-50 text-amber-700"><Icon name="search" className="size-6" /></div>
+              <h2 className="text-lg font-bold tracking-tight text-slate-900">Não encontramos dados com esses filtros</h2>
+              <p className="mt-2 max-w-xl text-sm leading-6 text-slate-600">Confira a grafia ou os campos escolhidos. Cargo e órgão são combinados entre si; o nome comum é exato. Para variações no nome, use <strong>Nome aproximado</strong> nas opções avançadas.</p>
+              <button type="button" onClick={clearSearch} className="mt-5 inline-flex min-h-10 items-center justify-center rounded-xl border border-emerald-200 bg-emerald-50 px-4 text-sm font-semibold text-emerald-900 transition hover:bg-emerald-100">Limpar filtros e tentar novamente</button>
+            </div>
           ) : (
             <>
               <div className="grid gap-3 lg:grid-cols-2">{result.data.map((record, index) => <ResultCard key={record.id ?? `${record.nome}-${index}`} record={record} index={index} />)}</div>

@@ -35,6 +35,23 @@ def health():
         return jsonify(error={"code": "DATABASE_UNAVAILABLE", "message": "Banco de dados indisponível."}), 503
 
 
+@app.get("/api/opcoes")
+def search_options():
+    """Return only real, non-empty cargo and agency values present in the database."""
+    try:
+        with db() as conn:
+            cargos = conn.execute(
+                "SELECT DISTINCT cargo FROM servidores WHERE cargo IS NOT NULL AND btrim(cargo) <> '' ORDER BY cargo"
+            ).fetchall()
+            orgaos = conn.execute(
+                "SELECT DISTINCT orgao FROM servidores WHERE orgao IS NOT NULL AND btrim(orgao) <> '' ORDER BY orgao"
+            ).fetchall()
+    except psycopg.Error:
+        app.logger.exception("Falha ao carregar opções de busca")
+        return error("DATABASE_UNAVAILABLE", "Não foi possível carregar os cargos e órgãos disponíveis.", 503)
+    return jsonify(cargos=[row["cargo"] for row in cargos], orgaos=[row["orgao"] for row in orgaos])
+
+
 def error(code, message, status):
     return jsonify(error={"code": code, "message": message}), status
 
