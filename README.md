@@ -128,15 +128,16 @@ As credenciais de `.env.example` são apenas para desenvolvimento local. Troque-
 
 ### Desenvolvimento do frontend
 
-O Docker Compose compila o frontend com Node e serve os arquivos otimizados pelo Nginx. Para iniciar o servidor de desenvolvimento Vite localmente, use Node.js 22 ou superior e disponibilize a API em `http://localhost:8000`:
+O Docker Compose compila o frontend com Node e serve os arquivos otimizados pelo Nginx. Para usar o Vite localmente, deixe o banco e a API do Compose ativos e então inicie o servidor de desenvolvimento no host:
 
 ```bash
+docker compose up -d backend
 cd frontend
 npm ci
 npm run dev
 ```
 
-Se a API estiver em outro endereço, configure `API_PROXY_TARGET` antes de iniciar o Vite. O servidor de desenvolvimento encaminha `/api` para essa URL; em produção, o proxy continua no Nginx.
+O Compose publica a API apenas em `127.0.0.1:8000`; o proxy do Vite encaminha `/api` para esse endereço. Se você mudar a porta da API com `API_PORT`, ajuste também `API_PROXY_TARGET` antes de iniciar o Vite. Em produção, o proxy continua no Nginx.
 
 ### Importar uma base oficial
 
