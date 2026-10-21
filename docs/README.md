@@ -7,6 +7,8 @@ Documentação baseada no código e nas evidências disponíveis até 20/10/2026
 | [`arquitetura.md`](arquitetura.md) | Serviços Docker, portas, rede e limites |
 | [`dados-e-etl.md`](dados-e-etl.md) | Dicionário, mapeamento, importação, privacidade e lacuna de UF |
 | [`reparo-campos-full-202508.md`](reparo-campos-full-202508.md) | Backfill FULL 08/2025, verificações, backup e reversão |
+| [Aplicativo desktop](../desktop/README.md) | Execução e empacotamento Windows com Electron |
+| [`aplicativo-desktop.md`](aplicativo-desktop.md) | Arquitetura, uso, segurança e limites do app desktop |
 | [`api.md`](api.md) | Rotas, parâmetros, respostas e erros |
 | [`seguranca.md`](seguranca.md) | Controles efetivos e próximos controles |
 | [`testes-e-carga.md`](testes-e-carga.md) | Comandos executados e lacuna de benchmark |

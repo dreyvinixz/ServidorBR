@@ -135,6 +135,23 @@ class ApiTest(unittest.TestCase):
         self.assertEqual(count_query, "SELECT count(*) AS n FROM servidores WHERE cargo_norm LIKE %(cargo)s")
         self.assertNotIn("count_limit", params)
 
+    @patch("app.db")
+    def test_search_options_returns_values_from_database(self, connect):
+        conn = MagicMock()
+        connect.return_value.__enter__.return_value = conn
+        cargos = MagicMock()
+        cargos.fetchall.return_value = [{"cargo": "ANALISTA"}, {"cargo": "PROFESSOR"}]
+        orgaos = MagicMock()
+        orgaos.fetchall.return_value = [{"orgao": "MINISTERIO"}]
+        conn.execute.side_effect = [cargos, orgaos]
+
+        response = self.client.get("/api/opcoes")
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json, {"cargos": ["ANALISTA", "PROFESSOR"], "orgaos": ["MINISTERIO"]})
+        self.assertIn("SELECT DISTINCT cargo", conn.execute.call_args_list[0].args[0])
+        self.assertIn("SELECT DISTINCT orgao", conn.execute.call_args_list[1].args[0])
+
 
 if __name__ == "__main__":
     unittest.main()

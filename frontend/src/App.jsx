@@ -163,7 +163,7 @@ export default function App() {
   const [loading, setLoading] = useState(false);
   const [options, setOptions] = useState({ cargos: [], orgaos: [] });
   const [optionsLoading, setOptionsLoading] = useState(true);
-  const [optionsError, setOptionsError] = useState(false);
+  const [optionsError, setOptionsError] = useState('');
   const activeRequest = useRef(null);
   const resultsRef = useRef(null);
 
@@ -178,7 +178,11 @@ export default function App() {
         setOptions({ cargos: body.cargos || [], orgaos: body.orgaos || [] });
       })
       .catch((requestError) => {
-        if (requestError.name !== 'AbortError') setOptionsError(true);
+        if (requestError.name !== 'AbortError') {
+          setOptionsError(requestError.message === 'Failed to fetch'
+            ? 'Não foi possível conectar à API. Inicie o backend e tente novamente.'
+            : requestError.message || 'Não foi possível carregar a lista de opções.');
+        }
       })
       .finally(() => { if (!controller.signal.aborted) setOptionsLoading(false); });
     return () => controller.abort();
@@ -285,10 +289,10 @@ export default function App() {
               <div className="lg:col-span-2">
                 <SearchField label="Nome do servidor" name="nome" icon="person" placeholder="Digite o nome completo" hint="Busca exata pelo nome informado." maxLength={120} value={filters.nome} onChange={updateField} />
               </div>
-              <SearchableSelect label="Cargo ou profissão" name="cargo" icon="briefcase" options={options.cargos} value={filters.cargo} onSelect={selectOption} placeholder="Selecione um cargo" loading={optionsLoading} disabled={optionsLoading || optionsError || !options.cargos.length} hint="Escolha entre os cargos existentes na base; digite para filtrar a lista." />
-              <SearchableSelect label="Órgão ou instituição" name="orgao" icon="building" options={options.orgaos} value={filters.orgao} onSelect={selectOption} placeholder="Selecione um órgão" loading={optionsLoading} disabled={optionsLoading || optionsError || !options.orgaos.length} hint="A lista mostra somente órgãos presentes nos registros." />
+              <SearchableSelect label="Cargo ou profissão" name="cargo" icon="briefcase" options={options.cargos} value={filters.cargo} onSelect={selectOption} placeholder="Selecione um cargo" loading={optionsLoading} disabled={optionsLoading || Boolean(optionsError) || !options.cargos.length} hint="Escolha entre os cargos existentes na base; digite para filtrar a lista." />
+              <SearchableSelect label="Órgão ou instituição" name="orgao" icon="building" options={options.orgaos} value={filters.orgao} onSelect={selectOption} placeholder="Selecione um órgão" loading={optionsLoading} disabled={optionsLoading || Boolean(optionsError) || !options.orgaos.length} hint="A lista mostra somente órgãos presentes nos registros." />
             </div>
-            {optionsError && <p role="status" className="mt-3 text-xs text-amber-800">Não foi possível carregar as listas agora. Atualize a página para tentar novamente.</p>}
+            {optionsError && <p role="status" className="mt-3 text-xs leading-5 text-amber-800">{optionsError}</p>}
             <details className="advanced-search mt-6">
               <summary className="advanced-summary">
                 <span className="advanced-icon"><Icon name="sliders" className="size-5" /></span>

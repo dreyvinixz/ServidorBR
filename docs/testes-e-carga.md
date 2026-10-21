@@ -9,7 +9,7 @@ python -m pip install -r backend/requirements.txt
 python -m unittest discover -s backend -p 'test_*.py'
 ```
 
-Quinze casos passaram localmente após a implementação do `COUNT` limitado. Além dos seis testes de API já existentes (normalização, parâmetros desconhecidos, UF válida indisponível, UF inválida, paginação inválida e bind parameter com payload de SQL injection), a suíte cobre o operador `pg_trgm`, contagens abaixo/acima do limite e filtro não similaridade com total exato, linhas idênticas preservadas, reimportação idempotente, delimitadores `;`, `,` e tabulação, nome vazio rejeitado, formato oficial sem cabeçalho em CP1252, campo grande em coluna não pesquisada e exclusão de CPF/matrícula dos dados persistidos.
+Dezesseis casos passaram localmente na branch de fechamento. Além dos testes de API para normalização, parâmetros desconhecidos, UF, paginação, SQL injection, busca por similaridade e opções distintas do endpoint `/api/opcoes`, a suíte cobre contagens abaixo/acima do limite, linhas idênticas preservadas, reimportação idempotente, delimitadores `;`, `,` e tabulação, nome vazio rejeitado, formato oficial sem cabeçalho em CP1252, campo grande em coluna não pesquisada e exclusão de CPF/matrícula dos dados persistidos.
 
 ## Validação de configuração
 
@@ -39,6 +39,10 @@ Esses números são a linha de base anterior à otimização, na fixture local c
 A análise inicial de `EXPLAIN (ANALYZE, BUFFERS)` para essa busca está em [`analise-busca-similaridade.md`](analise-busca-similaridade.md), junto à medição da consulta após limitar o `COUNT`.
 
 ## Carga concorrente
+
+## Aplicativo desktop adicional
+
+Em 20/10/2026, `desktop/npm ci`, `npm run check`, `npm audit` e `npm run package:win` foram executados em Windows. A auditoria reportou zero vulnerabilidades. O empacotamento gerou `desktop/release/ServidorBR-win32-x64/ServidorBR.exe`; a execução abriu a janela Electron com o título `ServidorBR — Consulta pública`. O app usa a API local do Compose, cujo healthcheck retornou HTTP 200. A inspeção visual do conteúdo da janela não foi possível porque o adaptador de navegador/desktop não estava disponível. O workflow CI Windows foi configurado para repetir o pacote e publicar a pasta como artefato.
 
 O script `backend/benchmark_concurrent.py` executa buscas por similaridade em paralelo e coleta `docker stats` do backend, banco e frontend durante cada nível. Para reproduzir na stack local:
 

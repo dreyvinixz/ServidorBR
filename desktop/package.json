@@ -1,0 +1,17 @@
+{
+  "name": "servidorbr-desktop",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Aplicativo desktop Windows da consulta ServidorBR",
+  "main": "main.cjs",
+  "scripts": {
+    "build:web": "npm --prefix ../frontend run build && node scripts/copy-web-build.cjs",
+    "start": "npm run build:web && electron .",
+    "package:win": "npm run build:web && electron-packager . ServidorBR --platform=win32 --arch=x64 --out=release --overwrite --prune=true --asar --executable-name=ServidorBR",
+    "check": "node --check main.cjs && node --check scripts/copy-web-build.cjs"
+  },
+  "devDependencies": {
+    "@electron/packager": "20.3.0",
+    "electron": "44.9.2"
+  }
+}

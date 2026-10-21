@@ -6,7 +6,7 @@ Este documento é o plano de trabalho oficial do projeto **ServidorBR**. Ele org
 
 > Importante: este plano não substitui o trabalho real. Commits, pull requests e mudanças de status devem ser registrados somente na data em que acontecerem e pela conta GitHub da pessoa responsável. Não criar commits retroativos ou simular atividade anterior.
 
-> Estado de 20/10/2026: a `main` remota está integrada até o PR #43. O reparo FULL e os seletores pesquisáveis estão na Issue #44, branch `fix/full-fields-backfill-search-feedback`; o aplicativo desktop adicional está na Issue #45. O prazo do enunciado (13/10/2026) já passou. A entrega solo não satisfaz a regra acadêmica de equipe mínima de três pessoas.
+> Estado de 20/10/2026: a `main` remota inclui o PR #46. O reparo FULL e os seletores pesquisáveis foram integrados pela Issue #44; o aplicativo desktop adicional está em desenvolvimento na Issue #45, branch `feat/SB-29-desktop-app`. O prazo do enunciado (13/10/2026) já passou. A entrega solo não satisfaz a regra acadêmica de equipe mínima de três pessoas.
 
 ## 2. Visão do produto
 
