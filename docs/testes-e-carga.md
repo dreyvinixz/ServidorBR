@@ -9,7 +9,7 @@ python -m pip install -r backend/requirements.txt
 python -m unittest discover -s backend -p 'test_*.py'
 ```
 
-Doze casos passaram localmente em 20/10/2026. Além dos seis testes de API já existentes (normalização, parâmetros desconhecidos, UF válida indisponível, UF inválida, paginação inválida e bind parameter com payload de SQL injection), a suíte cobre o operador `pg_trgm`, linhas idênticas preservadas, reimportação idempotente, delimitadores `;`, `,` e tabulação, nome vazio rejeitado, formato oficial sem cabeçalho em CP1252, campo grande em coluna não pesquisada e exclusão de CPF/matrícula dos dados persistidos.
+Quinze casos passaram localmente após a implementação do `COUNT` limitado. Além dos seis testes de API já existentes (normalização, parâmetros desconhecidos, UF válida indisponível, UF inválida, paginação inválida e bind parameter com payload de SQL injection), a suíte cobre o operador `pg_trgm`, contagens abaixo/acima do limite e filtro não similaridade com total exato, linhas idênticas preservadas, reimportação idempotente, delimitadores `;`, `,` e tabulação, nome vazio rejeitado, formato oficial sem cabeçalho em CP1252, campo grande em coluna não pesquisada e exclusão de CPF/matrícula dos dados persistidos.
 
 ## Validação de configuração
 
@@ -30,9 +30,13 @@ Medição em 20/10/2026:
 
 O cenário de similaridade revelou um erro Psycopg no operador `%` do `pg_trgm`, que retornava 503. O operador foi escapado como `%%` na consulta parametrizada e passou a ser coberto por teste de regressão; após a correção, as 20 amostras responderam com HTTP 200.
 
-Esses números são uma linha de base sequencial na fotografia completa local; similaridade foi a consulta mais lenta, com P50 de 464 ms e P95 de 535 ms. Um teste observou um pico isolado de 2,865 s na busca exata sem resultado. Os resultados justificam uma etapa futura de otimização e não representam teste concorrente ou garantia de produção.
+### Reavaliação após COUNT limitado
 
-A análise detalhada de `EXPLAIN (ANALYZE, BUFFERS)` para essa busca está em [`analise-busca-similaridade.md`](analise-busca-similaridade.md). Ela separa o custo do `COUNT`, do filtro trigram e da ordenação sem mudar consulta ou índice de produção.
+Na base local de 414.801 registros, o benchmark sequencial `backend/benchmark_api.py --runs 20` foi executado antes e em duas rodadas depois de limitar o `COUNT` da busca `similar`. Média/P50/P95 foram 467,657/458,078/508,740 ms antes; 360,438/337,995/463,395 ms na primeira rodada posterior; e 377,347/305,275/413,060 ms na segunda. O P99/maior foi 525,717 ms antes e 532,831/1.611,785 ms depois; com 20 amostras, P99 é o máximo observado. Os planos e a limitação da amostra estão detalhados em [`analise-busca-similaridade.md`](analise-busca-similaridade.md).
+
+Esses números são a linha de base anterior à otimização, na fixture local completa; similaridade foi a consulta mais lenta, com P50 de 464 ms e P95 de 535 ms. Um teste observou um pico isolado de 2,865 s na busca exata sem resultado. Os valores não representam uma garantia de produção.
+
+A análise inicial de `EXPLAIN (ANALYZE, BUFFERS)` para essa busca está em [`analise-busca-similaridade.md`](analise-busca-similaridade.md), junto à medição da consulta após limitar o `COUNT`.
 
 ## Carga concorrente
 
@@ -54,5 +58,16 @@ Medição local em 20/10/2026:
 | 8 | 4,131 | 1.243,185 ms | 1.126,815 ms | 1.946,416 ms | 2.126,200 ms | 25/25 | 0 | 377,03% / 610,37% | 354,80 MiB |
 
 Todos os requests retornaram HTTP 200. Nesta rodada, a vazão máxima ocorreu em concorrência 4; elevar para 8 reduziu a vazão e elevou o P95 para 1,95 s enquanto o pico de CPU observado no banco chegou a 610%. Isso aponta saturação crescente do banco para esta consulta e máquina, mas uma rodada de 25 amostras por nível não constitui capacidade de produção. O P99 com 25 amostras é igual ao maior valor observado. `docker stats` foi amostrado durante as rodadas; as contagens de amostras e o [relatório JSON sem dados pessoais](benchmark-concorrente-2026-10-20.json) guardam os valores completos.
+
+Após o `COUNT` limitado, a carga concorrente foi repetida nas mesmas condições e com 25 requisições por nível:
+
+| Concorrência | RPS antes → depois | P50 antes → depois | P95 antes → depois | Erros depois |
+|---:|---:|---:|---:|---:|
+| 1 | 1,747 → 3,038 | 562,910 → 315,633 ms | 622,533 → 416,612 ms | 0/25 |
+| 2 | 2,918 → 4,413 | 644,369 → 417,600 ms | 823,892 → 556,910 ms | 0/25 |
+| 4 | 4,464 → 6,090 | 752,932 → 488,089 ms | 982,653 → 531,444 ms | 0/25 |
+| 8 | 4,131 → 6,160 | 1.126,815 → 756,404 ms | 1.946,416 → 1.329,003 ms | 0/25 |
+
+Após a mudança, a CPU do banco foi observada em média/pico de 97,34%/100,68%, 178,12%/195,05%, 207,19%/390,14% e 342,40%/684,81% para concorrência 1, 2, 4 e 8; a memória máxima ficou entre 337,90 e 354,60 MiB. A coleta teve de 2 a 4 amostras por nível, conforme duração, então os picos são observados e podem perder variações curtas. A vazão ficou praticamente estável entre 4 e 8 concorrentes, enquanto o P95 subiu de 531 ms para 1,329 s. Todas as 100 requisições tiveram sucesso. O artefato integral depois da alteração está em [`benchmark-concorrente-depois-count-limitado-2026-10-20.json`](benchmark-concorrente-depois-count-limitado-2026-10-20.json); o antes está no JSON acima.
 
 Rate limit em memória, limite de consulta de 8 s e timeout Gunicorn de 15 s são configurações iniciais, não limites validados por benchmark.
