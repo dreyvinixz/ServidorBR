@@ -11,3 +11,4 @@ frontend/dist/
 desktop/node_modules/
 desktop/web-dist/
 desktop/release/
+tmp/
