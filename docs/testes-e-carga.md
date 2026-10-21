@@ -42,7 +42,7 @@ A análise inicial de `EXPLAIN (ANALYZE, BUFFERS)` para essa busca está em [`an
 
 ## Aplicativo desktop adicional
 
-Em 20/10/2026, `desktop/npm ci`, `npm run check`, `npm audit` e `npm run package:win` foram executados em Windows. A auditoria reportou zero vulnerabilidades. O empacotamento gerou `desktop/release/ServidorBR-win32-x64/ServidorBR.exe`; a execução abriu a janela Electron com o título `ServidorBR — Consulta pública`. O app usa a API local do Compose, cujo healthcheck retornou HTTP 200. A inspeção visual do conteúdo da janela não foi possível porque o adaptador de navegador/desktop não estava disponível. O workflow CI Windows foi configurado para repetir o pacote e publicar a pasta como artefato.
+Em 20/10/2026, `desktop/npm ci`, `npm run check`, `npm audit` e `npm run package:win` foram executados em Windows. A auditoria reportou zero vulnerabilidades. O empacotamento gerou `desktop/release/ServidorBR-win32-x64/ServidorBR.exe`; a execução abriu a janela Electron com o título `ServidorBR — Consulta pública`. O app usa a API local do Compose, cujo healthcheck retornou HTTP 200. O job Windows do PR #47 passou e publicou o pacote como artefato. A inspeção visual do conteúdo da janela não foi possível porque não havia navegador disponível no ambiente.
 
 O script `backend/benchmark_concurrent.py` executa buscas por similaridade em paralelo e coleta `docker stats` do backend, banco e frontend durante cada nível. Para reproduzir na stack local:
 

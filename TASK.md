@@ -6,12 +6,12 @@ Quadro operacional das tasks da equipe. Os requisitos, critérios de aceite e es
 
 - `@dreyvinixz`: desenvolvimento individual, incluindo dados, backend, frontend, DevOps e QA.
 
-## Estado da implementação local - 20/10/2026
+## Estado integrado em `main` - 20/10/2026
 
-- A `main` está em `212ec69`; o reparo FULL e os filtros pesquisáveis foram integrados pelo PR [#46](https://github.com/dreyvinixz/ServidorBR/pull/46), vinculado à Issue [#44](https://github.com/dreyvinixz/ServidorBR/issues/44).
+- A `main` está em `96dfd30`; o reparo FULL e os filtros pesquisáveis foram integrados pelo PR [#46](https://github.com/dreyvinixz/ServidorBR/pull/46), vinculado à Issue [#44](https://github.com/dreyvinixz/ServidorBR/issues/44).
 - O banco local contém 414.801 registros. O reparo FULL foi validado com backup reversível de 413.990 linhas; veja [`docs/reparo-campos-full-202508.md`](docs/reparo-campos-full-202508.md).
 - A interface oferece 1.479 cargos e 183 órgãos distintos por seletores pesquisáveis; o build web e os 16 testes do backend passaram. A inspeção visual automatizada pelo navegador continua pendente porque o ambiente não oferece navegador.
-- O app desktop da Issue [#45](https://github.com/dreyvinixz/ServidorBR/issues/45) foi empacotado e abriu uma janela responsiva `ServidorBR — Consulta pública` na branch `feat/SB-29-desktop-app`; aguarda PR e CI Windows antes de ser concluído.
+- O aplicativo desktop da Issue [#45](https://github.com/dreyvinixz/ServidorBR/issues/45) foi integrado pelo PR [#47](https://github.com/dreyvinixz/ServidorBR/pull/47); os checks `backend`, `frontend` e `desktop` passaram e a issue foi fechada.
 - A autoria do trabalho é individual. O requisito acadêmico de três ou quatro participantes continua não atendido; não atribuir autoria ou histórico a outras pessoas.
 - O prazo do enunciado era 13/10/2026; esta implementação iniciou em 20/10/2026.
 
@@ -21,7 +21,7 @@ Quadro operacional das tasks da equipe. Os requisitos, critérios de aceite e es
 - Cada alteração é integrada por Pull Request para `main`; o check obrigatório `backend` precisa passar.
 - Revisão independente é recomendada quando houver outro colaborador disponível; não simular aprovação em trabalho solo.
 - `main` continua protegida contra force push e exclusão e exige branches atualizadas.
-- Uma task só é marcada como concluída após PR aprovado, mesclado e testes aplicáveis passarem.
+- Uma task só é marcada como concluída após PR mesclado e checks/testes aplicáveis passarem; aprovação independente não é simulada no fluxo solo.
 
 ## Sprint 1 - Fundação e API pesquisável
 
@@ -50,9 +50,9 @@ Quadro operacional das tasks da equipe. Os requisitos, critérios de aceite e es
 - [x] **SB-16** - Proxy Nginx e integração frontend-backend - proxy configurado em `frontend/nginx.conf`.
 - [x] **SB-17** - Cenários de carga e coleta de métricas reais - medições concorrentes e limitações registradas em [`docs/testes-e-carga.md`](docs/testes-e-carga.md).
 - [x] **SB-18** - Otimizar consultas e registrar limitações - plano, custo de contagem e mudança limitada documentados em [`docs/analise-busca-similaridade.md`](docs/analise-busca-similaridade.md).
-- [x] **SB-19** - Pipeline de CI para testes e build - workflow executa jobs de backend e frontend; o job desktop está sendo adicionado nesta entrega.
+- [x] **SB-19** - Pipeline de CI para testes e build - workflow executa jobs de backend, frontend e empacotamento desktop Windows.
 - [ ] **SB-20** - Documentação técnica, relatório e burndown real - documentação técnica e relatório estão atualizados; burndown histórico completo não foi reconstruído.
-- [ ] **SB-21** - Checklist, regressão e preparação da entrega - validações automatizadas em execução; aceite visual e critérios acadêmicos de equipe/prazo permanecem pendentes.
+- [ ] **SB-21** - Checklist, regressão e preparação da entrega - validações automatizadas passaram; inspeção visual e critérios acadêmicos de equipe/prazo permanecem pendentes.
 
 ## Melhorias do produto
 
@@ -60,4 +60,4 @@ Quadro operacional das tasks da equipe. Os requisitos, critérios de aceite e es
 - [x] **SB-24** - Melhorar usabilidade das opções avançadas de busca - `dreyvinixz` (solo) - Issue [#40](https://github.com/dreyvinixz/ServidorBR/issues/40), PR [#41](https://github.com/dreyvinixz/ServidorBR/pull/41)
 - [x] **SB-25** - Corrigir mapeamento dos cabeçalhos do CSV FULL - `dreyvinixz` (solo) - Issue [#42](https://github.com/dreyvinixz/ServidorBR/issues/42), PR [#43](https://github.com/dreyvinixz/ServidorBR/pull/43)
 - [x] **SB-28** - Recuperar cargo/órgão no FULL e melhorar filtros pesquisáveis - `dreyvinixz` (solo) - Issue [#44](https://github.com/dreyvinixz/ServidorBR/issues/44), PR [#46](https://github.com/dreyvinixz/ServidorBR/pull/46)
-- [ ] **SB-29** - Aplicativo desktop com interface gráfica (ponto adicional) - `dreyvinixz` (solo) - Issue [#45](https://github.com/dreyvinixz/ServidorBR/issues/45)
+- [x] **SB-29** - Aplicativo desktop com interface gráfica (ponto adicional) - `dreyvinixz` (solo) - Issue [#45](https://github.com/dreyvinixz/ServidorBR/issues/45), PR [#47](https://github.com/dreyvinixz/ServidorBR/pull/47); CI Windows passou.
