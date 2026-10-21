@@ -6,7 +6,7 @@ Este documento é o plano de trabalho oficial do projeto **ServidorBR**. Ele org
 
 > Importante: este plano não substitui o trabalho real. Commits, pull requests e mudanças de status devem ser registrados somente na data em que acontecerem e pela conta GitHub da pessoa responsável. Não criar commits retroativos ou simular atividade anterior.
 
-> Estado de 20/10/2026: há uma implementação MVP local na branch `feat/SB-02-21-mvp-entrega`, documentada em `docs/relatorio-final.md`. O prazo de entrega definido no enunciado (13/10/2026) já passou. O MVP solo não satisfaz a regra de equipe mínima de três pessoas; os itens do roadmap permanecem abertos até revisão/integracão e comprovação de seus critérios.
+> Estado de 20/10/2026: a `main` remota está integrada até o PR #43. O reparo FULL e os seletores pesquisáveis estão na Issue #44, branch `fix/full-fields-backfill-search-feedback`; o aplicativo desktop adicional está na Issue #45. O prazo do enunciado (13/10/2026) já passou. A entrega solo não satisfaz a regra acadêmica de equipe mínima de três pessoas.
 
 ## 2. Visão do produto
 
@@ -32,11 +32,9 @@ Os nomes devem ser preenchidos antes do início da Sprint 1. Os papéis não imp
 
 | Papel | Integrante | Responsabilidade principal |
 | --- | --- | --- |
-| Líder técnico / Backend / DevOps / QA | `@dreyvinixz` | Arquitetura, API Flask, integrações, Docker, CI, testes, carga, revisão técnica e acompanhamento diário. |
-| Dados / Banco | `Guilherme EstrellaShaarkegas (@Shaarkegas)` | Dicionário de dados, ETL, PostgreSQL, normalização e índices. |
-| Frontend | `PREENCHER` | Interface React, experiência responsiva e consumo exclusivo da API. |
+| Desenvolvimento individual | `@dreyvinixz` | Implementação efetivamente registrada: arquitetura, dados, API, frontend, DevOps, QA, documentação e entrega. |
 
-O nome e o usuário GitHub do integrante de Frontend devem ser preenchidos antes do início da Sprint 1. A colaboração e a revisão cruzada continuam permitidas, mas a autoria dos commits deve refletir o trabalho efetivamente realizado por cada pessoa.
+O plano inicial previa divisão por papéis, mas a implementação entregue foi individual. Não atribuir trabalho ou autoria a outras pessoas sem evidência. A colaboração e a revisão cruzada continuam permitidas.
 
 ## 4. Processo ágil e rastreabilidade
 

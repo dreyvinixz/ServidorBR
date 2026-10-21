@@ -1,7 +1,7 @@
 # Relatório de estado do projeto - ServidorBR
 
 **Atualizado em:** 20/10/2026  
-**Estado:** MVP integrado; análise local de consultas, benchmark concorrente e auditoria documental das fontes concluídos; entrega acadêmica ainda não aprovada.
+**Estado:** MVP integrado até PR #43; reparo dos campos FULL e busca com listas pesquisáveis validados na branch `fix/full-fields-backfill-search-feedback`; aplicativo desktop adicional em desenvolvimento.
 
 ## 1. Escopo disponível
 
@@ -28,10 +28,15 @@ O enunciado define entrega limite em 13/10/2026. Esta implementação começou e
 - A rota agora limita a contagem da busca por similaridade ao parâmetro `limit`, mantendo contagem exata abaixo do teto e o total capado acima dele. Três testes cobrem abaixo/acima do limite e contagem exata dos demais filtros. Duas rodadas sequenciais mostraram P50 de 305–338 ms e P95 de 413–463 ms, contra 458/509 ms antes; uma segunda rodada teve pico máximo isolado de 1,612 s. O plano limitado executou em 33 ms e 567 shared hits contra 237 ms e 10.457 hits na contagem integral.
 - O benchmark concorrente foi repetido com 25 requisições por nível (1, 2, 4 e 8), 100 respostas HTTP 200 e nenhum erro. Após a mudança, a vazão foi de 3,04/4,41/6,09/6,16 req/s e o P95 de 417/557/531/1.329 ms, respectivamente. O pico observado de CPU do banco chegou a 685%. Uma execução curta não comprova capacidade de produção; o P99 com 25 amostras é o maior valor observado.
 - Os resultados sequenciais e concorrentes, instruções de reprodução e métricas de CPU/RAM estão em `docs/testes-e-carga.md`; os planos e comparação estão em `docs/analise-busca-similaridade.md`, e os JSON antes/depois estão em `docs/benchmark-concorrente-2026-10-20.json` e `docs/benchmark-concorrente-depois-count-limitado-2026-10-20.json`.
+- O reparo autorizado da base local criou `servidores_full_fields_backup_20261020` com 413.990 linhas e atualizou somente `cargo`, `cargo_norm`, `orgao` e `orgao_norm` por `(source_file, source_hash)`. Readback confirmou 414.801 registros totais, 413.920 linhas FULL com cargo, 413.990 com órgão e 811 linhas mensais intactas. A procedure e o SQL de reversão estão em `docs/reparo-campos-full-202508.md`.
+- A API `GET /api/opcoes` fornece 1.479 cargos e 183 órgãos distintos da base; a busca aproximada `Maria Silva` retornou 100 resultados com campos de cargo/órgão preenchidos. `npm run build` e `python -m unittest discover -s backend -p 'test_*.py'` passaram (15 testes). A API também retornou 200 para uma consulta vazia.
+- A interface web ainda aguarda inspeção visual no navegador: o ambiente de automação não disponibilizou navegador. A responsividade foi compilada, mas não foi declarada como visualmente aceita.
 
 ## 5. Branches, PRs e proteção
 
 - PRs #13 a #34 foram integrados por Pull Requests; PR #21 integrou o formato oficial e as validações do ETL, PR #24 ampliou o parser para a fotografia completa, PR #26 documentou a análise de consulta, PR #28 fixou a regra de fonte, PR #30 adicionou o benchmark concorrente, PR #32 atualizou este relatório, e PR #34 limitou o `COUNT` da busca por similaridade e repetiu as medições.
+- PRs #36, #37, #39, #41 e #43 integraram o frontend React/Tailwind, documentação de status, proxy Vite, opções avançadas e aliases do FULL. O trabalho de restauração de dados e listas pesquisáveis está na Issue #44 e aguarda PR/checks/integração.
+- A Issue #45 acompanha o aplicativo desktop para o ponto adicional de 1,0; o desenvolvimento e o pacote Windows ainda estão pendentes.
 - A proteção de `main` exige o check `backend` e branch atualizada; administradores também estão sujeitos às regras; force push e exclusão estão bloqueados.
 - A exigência de aprovação foi configurada como zero para permitir o fluxo solo. Aprovação independente pode ser adicionada quando houver outro colaborador; não foi simulada.
 
@@ -47,4 +52,4 @@ O enunciado define entrega limite em 13/10/2026. Esta implementação começou e
 
 ## 7. Conclusão
 
-O código, os testes e a documentação permitem reproduzir a execução local com uma amostra oficial. Não declarar a entrega acadêmica como concluída: faltam evidência da equipe exigida, adequação ao prazo e medições de carga sobre um conjunto representativo.
+O código, os testes e a documentação permitem reproduzir a execução local com uma amostra oficial. Para fechar o repositório ainda faltam integrar a Issue #44, entregar e integrar o aplicativo desktop da Issue #45 e concluir a inspeção visual quando houver navegador disponível. Não declarar a entrega acadêmica como concluída: faltam evidência da equipe exigida e adequação ao prazo.
