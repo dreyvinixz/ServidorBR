@@ -53,3 +53,7 @@ Quadro operacional das tasks da equipe. Os requisitos, critérios de aceite e es
 - [ ] **SB-19** - Pipeline de CI para testes e build - DEV-02 - `ci/SB-19-pipeline`
 - [ ] **SB-20** - Documentação técnica, relatório e burndown real - DEV-02 - `docs/SB-20-relatorio-final`
 - [ ] **SB-21** - Checklist, regressão e preparação da entrega - DEV-02 - `chore/SB-21-entrega-final`
+
+## Melhorias do produto
+
+- [ ] **SB-22** - Modernizar frontend com React, Vite e Tailwind CSS 4 - `dreyvinixz` (solo) - Issue [#35](https://github.com/dreyvinixz/ServidorBR/issues/35)
