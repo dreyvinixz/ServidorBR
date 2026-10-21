@@ -48,7 +48,7 @@ def iter_search_fields(source, dialect):
     columns = {key(name): index for index, name in enumerate(first)}
     has_header = "NOME" in columns and (
         len(first) < OFFICIAL_COLUMNS
-        or bool({"CARGO", "NOMEDOORGAO", "CPF", "MATRICULADOSERVIDOR"} & columns.keys())
+        or bool({"CARGO", "CARGOEMPREGO", "NOMEDOORGAO", "ORGAO", "CPF", "MATRICULA", "MATRICULADOSERVIDOR"} & columns.keys())
     )
     if has_header:
         def value(row, *names):
@@ -59,7 +59,11 @@ def iter_search_fields(source, dialect):
             return ""
 
         for row in reader:
-            yield value(row, "Nome"), value(row, "Cargo"), value(row, "Nome do órgão", "Nome do orgao")
+            yield (
+                value(row, "Nome"),
+                value(row, "Cargo", "Cargo emprego"),
+                value(row, "Nome do órgão", "Nome do orgao", "Orgao"),
+            )
         return
 
     # Official APOSENTADOS_MMAAAA files have no header. The published dictionary
