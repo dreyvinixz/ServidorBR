@@ -56,4 +56,4 @@ Quadro operacional das tasks da equipe. Os requisitos, critérios de aceite e es
 
 ## Melhorias do produto
 
-- [ ] **SB-22** - Modernizar frontend com React, Vite e Tailwind CSS 4 - `dreyvinixz` (solo) - Issue [#35](https://github.com/dreyvinixz/ServidorBR/issues/35)
+- [x] **SB-22** - Modernizar frontend com React, Vite e Tailwind CSS 4 - `dreyvinixz` (solo) - Issue [#35](https://github.com/dreyvinixz/ServidorBR/issues/35), PR [#36](https://github.com/dreyvinixz/ServidorBR/pull/36)
