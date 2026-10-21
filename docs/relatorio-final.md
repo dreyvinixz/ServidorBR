@@ -20,17 +20,18 @@ O enunciado define entrega limite em 13/10/2026. Esta implementação começou e
 ## 4. Evidências técnicas
 
 - `docker compose config -q`: passou em 20/10/2026.
-- `python -m unittest discover -s backend -p 'test_*.py'`: 12 testes passaram em 20/10/2026, incluindo API, ETL, formato oficial CP1252, campo extralongo e reimportação idempotente.
+- `python -m unittest discover -s backend -p 'test_*.py'`: 15 testes passaram após a mudança do `COUNT`, incluindo API, ETL, limites da contagem, formato oficial CP1252, campo extralongo e reimportação idempotente.
 - Os três serviços iniciaram; `db` e `backend` ficaram saudáveis; página e `GET /api/health` retornaram HTTP 200.
 - Fontes oficiais `APOSENTADOS_082025.csv` e `APOSENTADOS_082025_FULL.csv`: 811 e 413.990 linhas inseridas, respectivamente; banco com 414.801 hashes únicos. A reimportação da extração mensal inseriu 0 e reconheceu 811 duplicatas. CPF e matrícula não existem no schema e não são enviados ao banco pelo ETL.
 - Busca por cargo retornou HTTP 200 e 35 registros; similaridade retornou HTTP 200 com limite de 100. O defeito no operador `%` do `pg_trgm` foi corrigido e ganhou teste de regressão.
 - `EXPLAIN (ANALYZE, BUFFERS)` sobre 414.801 linhas apontou 6.970 resultados após rechecagem e ~10,4 mil blocos de heap; o sort Top-N consumiu cerca de 2 ms. Um experimento de `COUNT` limitado a 100 levou 31,440 ms contra mediana de 207,183 ms para o `COUNT` integral. A API não foi alterada nessa investigação.
-- O benchmark concorrente executou 25 requisições em cada nível (1, 2, 4 e 8), com 100 respostas HTTP 200 e nenhum erro. A vazão máxima foi 4,464 req/s em concorrência 4; em concorrência 8, o P95 foi 1,946 s e o pico observado de CPU do banco foi 610%. Uma execução curta não comprova capacidade de produção; o P99 com 25 amostras é o maior valor observado.
-- Os resultados sequenciais e concorrentes, instruções de reprodução e métricas de CPU/RAM estão em `docs/testes-e-carga.md`; os planos completos da análise estão em `docs/analise-busca-similaridade.md` e o benchmark em `docs/benchmark-concorrente-2026-10-20.json`.
+- A rota agora limita a contagem da busca por similaridade ao parâmetro `limit`, mantendo contagem exata abaixo do teto e o total capado acima dele. Três testes cobrem abaixo/acima do limite e contagem exata dos demais filtros. Duas rodadas sequenciais mostraram P50 de 305–338 ms e P95 de 413–463 ms, contra 458/509 ms antes; uma segunda rodada teve pico máximo isolado de 1,612 s. O plano limitado executou em 33 ms e 567 shared hits contra 237 ms e 10.457 hits na contagem integral.
+- O benchmark concorrente foi repetido com 25 requisições por nível (1, 2, 4 e 8), 100 respostas HTTP 200 e nenhum erro. Após a mudança, a vazão foi de 3,04/4,41/6,09/6,16 req/s e o P95 de 417/557/531/1.329 ms, respectivamente. O pico observado de CPU do banco chegou a 685%. Uma execução curta não comprova capacidade de produção; o P99 com 25 amostras é o maior valor observado.
+- Os resultados sequenciais e concorrentes, instruções de reprodução e métricas de CPU/RAM estão em `docs/testes-e-carga.md`; os planos e comparação estão em `docs/analise-busca-similaridade.md`, e os JSON antes/depois estão em `docs/benchmark-concorrente-2026-10-20.json` e `docs/benchmark-concorrente-depois-count-limitado-2026-10-20.json`.
 
 ## 5. Branches, PRs e proteção
 
-- PRs #13 a #30 foram integrados por Pull Requests; PR #21 integrou o formato oficial e as validações do ETL, PR #24 ampliou o parser para a fotografia completa, PR #26 documentou a análise de consulta, PR #28 fixou a regra de fonte, e PR #30 adicionou e executou o benchmark concorrente.
+- PRs #13 a #34 foram integrados por Pull Requests; PR #21 integrou o formato oficial e as validações do ETL, PR #24 ampliou o parser para a fotografia completa, PR #26 documentou a análise de consulta, PR #28 fixou a regra de fonte, PR #30 adicionou o benchmark concorrente, PR #32 atualizou este relatório, e PR #34 limitou o `COUNT` da busca por similaridade e repetiu as medições.
 - A proteção de `main` exige o check `backend` e branch atualizada; administradores também estão sujeitos às regras; force push e exclusão estão bloqueados.
 - A exigência de aprovação foi configurada como zero para permitir o fluxo solo. Aprovação independente pode ser adicionada quando houver outro colaborador; não foi simulada.
 

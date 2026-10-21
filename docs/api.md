@@ -21,7 +21,7 @@ Sucesso HTTP 200: `{"status":"ok","database":"ok"}`. Falha de banco: HTTP 503, `
 | `uf` | UF inválida -> 400; UF válida -> 422 `UF_UNAVAILABLE`, pois o arquivo de aposentados não contém UF |
 | `page` | Inteiro de 1 a 1.000.000; padrão 1; página além do total retorna 400 quando há resultados |
 | `per_page` | Inteiro entre 1 e 100; padrão 25 |
-| `limit` | Inteiro entre 1 e 100; só é aceito com `similar`; padrão 100 |
+| `limit` | Máximo global de resultados para `similar`; inteiro entre 1 e 100; padrão 100. A última página pode conter menos de `per_page` itens para não ultrapassar esse teto. |
 
 Exemplos:
 

@@ -92,11 +92,23 @@ def search():
         filters.extend(["nome_norm %% %(similar)s", "nome_norm LIKE %(pattern)s"])
     where = " WHERE " + " AND ".join(filters) if filters else ""
     page_size = min(per_page, limit) if similar is not None else per_page
-    params.update(limit=page_size, offset=(page - 1) * page_size)
+    offset = (page - 1) * page_size
+    result_limit = page_size
+    if similar is not None:
+        result_limit = max(0, min(page_size, limit - offset))
+    params.update(limit=result_limit, offset=offset)
     started = time.perf_counter()
     try:
         with db() as conn:
-            total = conn.execute(f"SELECT count(*) AS n FROM servidores{where}", params).fetchone()["n"]
+            if similar is not None:
+                count_query = (
+                    f"SELECT count(*) AS n FROM (SELECT 1 FROM servidores{where} "
+                    "LIMIT %(count_limit)s) AS matched"
+                )
+                params["count_limit"] = limit
+            else:
+                count_query = f"SELECT count(*) AS n FROM servidores{where}"
+            total = conn.execute(count_query, params).fetchone()["n"]
             if similar is not None:
                 total = min(total, limit)
             pages = (total + page_size - 1) // page_size

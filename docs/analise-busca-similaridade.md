@@ -80,8 +80,21 @@ Os planos variam com o estado do cache; as execuções repetidas da consulta com
 3. **O `COUNT` integral repete o filtro antes da busca de resultados.** A rota executa `count(*)` e, depois, a seleção ordenada. As medianas locais de `COUNT` e seleção limitada ficam próximas de 207 ms e 216–229 ms, respectivamente, compatíveis com a busca HTTP anterior de P50 464 ms.
 4. **O total exposto pela API é limitado.** Para busca por similaridade, a rota retorna `min(total, limit)`, e `limit` não pode exceder 100. Um `COUNT` sobre uma subconsulta limitada ao mesmo `limit` preserva o total exposto pela API: se houver menos resultados, conta todos; se houver mais, conta até o limite. No teste exploratório com limite 100, o `COUNT` caiu para 31,440 ms e 567 blocos, embora a criação do bitmap trigram ainda tenha lido 75.956 entradas.
 
-## Recomendação para a próxima alteração
+## Resultado após limitar a contagem
 
-Priorizar um `COUNT` limitado a `limit`, coberto por testes de contrato para zero, abaixo do limite e acima do limite. Medir novamente o plano e a latência HTTP antes de considerar mudanças no índice ou na ordenação. A evidência atual não justifica adicionar índice de ordenação: o `Sort` é Top-N pequeno, enquanto a varredura/rechecagem do filtro e a contagem integral concentram o custo. O experimento de contagem limitada foi apenas `EXPLAIN ANALYZE`; a API continua inalterada.
+A rota passou a calcular `count(*)` sobre uma subconsulta com `LIMIT limit` somente em buscas por similaridade. Assim, abaixo do limite o total continua exato; no limite ou acima dele, a resposta continua expondo o teto já previsto no contrato. Os outros filtros continuam usando `COUNT(*)` exato. A seleção também reduz o `LIMIT` da última página para o número de itens ainda permitido pelo teto global; o teste e o smoke test verificam `limit=5`, `per_page=2`, página 3 retornando somente uma linha.
+
+No mesmo banco, o plano do contador limitado a 100 executou em **33,363 ms**, com **567 shared hits** e 100 linhas visitadas no heap. O `COUNT` integral executou em **237,481 ms**, com **10.457 shared hits** e 6.970 linhas visitadas. O bitmap trigram ainda leu 75.956 entradas nos dois planos; o limite reduziu o trabalho posterior no heap.
+
+O benchmark sequencial HTTP com 20 amostras antes/depois mostrou, para similaridade:
+
+| Medição | Antes | Depois, rodada 1 | Depois, rodada 2 |
+|---|---:|---:|---:|
+| Média | 467,657 ms | 360,438 ms | 377,347 ms |
+| P50 | 458,078 ms | 337,995 ms | 305,275 ms |
+| P95 | 508,740 ms | 463,395 ms | 413,060 ms |
+| P99/maior | 525,717 ms | 532,831 ms | 1.611,785 ms |
+
+Nas duas execuções após a mudança, P50 e P95 ficaram abaixo da medição anterior. O P99 com 20 amostras é o maior valor observado; a segunda rodada teve um pico isolado de 1,612 s, preservado no relatório. Os planos não indicam necessidade de índice de ordenação: o sort Top-N permanece pequeno, enquanto filtro e heap dominam a execução. A medição concorrente após a mudança está registrada em `docs/testes-e-carga.md`.
 
 Esta análise é de uma base local e de um único termo de busca. Não é benchmark concorrente nem previsão de desempenho em produção.
