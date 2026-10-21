@@ -10,8 +10,8 @@ Quadro operacional das tasks da equipe. Os requisitos, critérios de aceite e es
 
 - A `main` está em `212ec69`; o reparo FULL e os filtros pesquisáveis foram integrados pelo PR [#46](https://github.com/dreyvinixz/ServidorBR/pull/46), vinculado à Issue [#44](https://github.com/dreyvinixz/ServidorBR/issues/44).
 - O banco local contém 414.801 registros. O reparo FULL foi validado com backup reversível de 413.990 linhas; veja [`docs/reparo-campos-full-202508.md`](docs/reparo-campos-full-202508.md).
-- A interface oferece 1.479 cargos e 183 órgãos distintos por seletores pesquisáveis; `npm run build` e os 15 testes do backend passaram. A inspeção visual automatizada ficou pendente porque não havia navegador disponível no ambiente.
-- O app desktop para o ponto adicional está em desenvolvimento na branch `feat/SB-29-desktop-app`, Issue [#45](https://github.com/dreyvinixz/ServidorBR/issues/45); ainda não conte como concluído.
+- A interface oferece 1.479 cargos e 183 órgãos distintos por seletores pesquisáveis; o build web e os 16 testes do backend passaram. A inspeção visual automatizada pelo navegador continua pendente porque o ambiente não oferece navegador.
+- O app desktop da Issue [#45](https://github.com/dreyvinixz/ServidorBR/issues/45) foi empacotado e abriu uma janela responsiva `ServidorBR — Consulta pública` na branch `feat/SB-29-desktop-app`; aguarda PR e CI Windows antes de ser concluído.
 - A autoria do trabalho é individual. O requisito acadêmico de três ou quatro participantes continua não atendido; não atribuir autoria ou histórico a outras pessoas.
 - O prazo do enunciado era 13/10/2026; esta implementação iniciou em 20/10/2026.
 
@@ -27,32 +27,32 @@ Quadro operacional das tasks da equipe. Os requisitos, critérios de aceite e es
 
 **Branch:** `sprint/01-fundacao-api`
 
-- [ ] **SB-01** - Repositório, quadro ágil, Issues e modelos de PR - DEV-02 - `chore/SB-01-estrutura-agil`
-- [ ] **SB-02** - Analisar dicionários dos datasets e mapear campos - DEV-01 - `docs/SB-02-dicionario-dados`
-- [ ] **SB-03** - Modelar schema e scripts de inicialização PostgreSQL - DEV-01 - `feat/SB-03-schema-postgres`
-- [ ] **SB-04** - Criar `pg_trgm` e índices B-Tree/GIN - DEV-01 - `perf/SB-04-indices-pesquisa`
+- [x] **SB-01** - Repositório, quadro ágil, Issues e modelos de PR - estrutura registrada no histórico de Issues/PRs e neste quadro.
+- [x] **SB-02** - Analisar dicionários dos datasets e mapear campos - mapeamento e limitações em [`docs/dados-e-etl.md`](docs/dados-e-etl.md).
+- [x] **SB-03** - Modelar schema e scripts de inicialização PostgreSQL - schema em `db/init.sql`.
+- [ ] **SB-04** - Criar `pg_trgm` e índices B-Tree/GIN - índices para campos pesquisáveis existem; UF permanece indisponível porque a fonte usada não fornece esse campo.
 - [x] **SB-05** - Construir ETL, validação e normalização dos CSVs - `dreyvinixz` (solo) - PRs [#21](https://github.com/dreyvinixz/ServidorBR/pull/21) e [#24](https://github.com/dreyvinixz/ServidorBR/pull/24); evidência em [`docs/dados-e-etl.md`](docs/dados-e-etl.md)
-- [ ] **SB-06** - Criar Flask, SQLAlchemy, configuração e health check - DEV-02 - `feat/SB-06-api-base-health`
-- [ ] **SB-07** - Implementar busca e filtros combinados - DEV-02 - `feat/SB-07-api-filtros`
-- [ ] **SB-08** - Validar parâmetros, paginação e erros JSON - DEV-02 - `feat/SB-08-validacao-paginacao`
-- [ ] **SB-09** - Configurar Gunicorn, timeout e rate limiting - DEV-02 - `feat/SB-09-protecao-api`
-- [ ] **SB-10** - Dockerfiles, Compose, healthchecks e `.env.example` - DEV-02 - `chore/SB-10-docker-compose`
-- [ ] **SB-11** - Testes de API, validação e SQL injection - DEV-02 - `test/SB-11-api-seguranca`
+- [ ] **SB-06** - Criar Flask, SQLAlchemy, configuração e health check - Flask, configuração e health check estão implementados; a conexão usa psycopg, não SQLAlchemy.
+- [ ] **SB-07** - Implementar busca e filtros combinados - nome, cargo, órgão e similaridade estão implementados; filtro de UF depende de uma fonte que contenha UF.
+- [x] **SB-08** - Validar parâmetros, paginação e erros JSON - validações e erros JSON cobertos pelos testes do backend.
+- [x] **SB-09** - Configurar Gunicorn, timeout e rate limiting - configuração e limites em `backend/Dockerfile` e `backend/app.py`.
+- [x] **SB-10** - Dockerfiles, Compose, healthchecks e `.env.example` - stack de três serviços e healthchecks configurados.
+- [x] **SB-11** - Testes de API, validação e SQL injection - suíte automatizada do backend.
 
 ## Sprint 2 - Experiência web, desempenho e entrega
 
 **Branch:** `sprint/02-experiencia-entrega`
 
-- [ ] **SB-12** - Busca por similaridade via `pg_trgm` - DEV-02 - `feat/SB-12-busca-similaridade`
-- [ ] **SB-13** - Estrutura React, layout e responsividade - DEV-03 - `feat/SB-13-layout-react`
-- [ ] **SB-14** - Formulário de filtros e consumo da API - DEV-03 - `feat/SB-14-formulario-busca`
-- [ ] **SB-15** - Lista, detalhes, paginação e estados de interface - DEV-03 - `feat/SB-15-resultados-paginacao`
-- [ ] **SB-16** - Proxy Nginx e integração frontend-backend - DEV-02 - `feat/SB-16-proxy-integracao`
-- [ ] **SB-17** - Cenários de carga e coleta de métricas reais - DEV-02 - `test/SB-17-carga`
-- [ ] **SB-18** - Otimizar consultas e registrar limitações - DEV-01 - `perf/SB-18-otimizacao-consultas`
-- [ ] **SB-19** - Pipeline de CI para testes e build - DEV-02 - `ci/SB-19-pipeline`
-- [ ] **SB-20** - Documentação técnica, relatório e burndown real - DEV-02 - `docs/SB-20-relatorio-final`
-- [ ] **SB-21** - Checklist, regressão e preparação da entrega - DEV-02 - `chore/SB-21-entrega-final`
+- [x] **SB-12** - Busca por similaridade via `pg_trgm` - endpoint e análise documentados em [`docs/analise-busca-similaridade.md`](docs/analise-busca-similaridade.md).
+- [ ] **SB-13** - Estrutura React, layout e responsividade - interface React/Tailwind implementada; inspeção visual manual ainda pendente.
+- [ ] **SB-14** - Formulário de filtros e consumo da API - nome, cargo, órgão e similaridade consomem a API; UF indisponível na fonte atual.
+- [ ] **SB-15** - Lista, detalhes, paginação e estados de interface - lista, paginação e estados estão implementados; painel de detalhe individual e inspeção visual continuam pendentes.
+- [x] **SB-16** - Proxy Nginx e integração frontend-backend - proxy configurado em `frontend/nginx.conf`.
+- [x] **SB-17** - Cenários de carga e coleta de métricas reais - medições concorrentes e limitações registradas em [`docs/testes-e-carga.md`](docs/testes-e-carga.md).
+- [x] **SB-18** - Otimizar consultas e registrar limitações - plano, custo de contagem e mudança limitada documentados em [`docs/analise-busca-similaridade.md`](docs/analise-busca-similaridade.md).
+- [x] **SB-19** - Pipeline de CI para testes e build - workflow executa jobs de backend e frontend; o job desktop está sendo adicionado nesta entrega.
+- [ ] **SB-20** - Documentação técnica, relatório e burndown real - documentação técnica e relatório estão atualizados; burndown histórico completo não foi reconstruído.
+- [ ] **SB-21** - Checklist, regressão e preparação da entrega - validações automatizadas em execução; aceite visual e critérios acadêmicos de equipe/prazo permanecem pendentes.
 
 ## Melhorias do produto
 

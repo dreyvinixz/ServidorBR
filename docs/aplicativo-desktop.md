@@ -5,7 +5,7 @@ O ServidorBR Desktop é um aplicativo gráfico para Windows que reutiliza a inte
 ## Uso
 
 1. Inicie PostgreSQL e API: `docker compose up -d db backend`.
-2. Gere a pasta portátil: em `desktop`, execute `npm ci` e `npm run package:win`.
+2. Gere a pasta portátil em Windows com Node.js 22.12 ou superior: em `desktop`, execute `npm ci` e `npm run package:win`.
 3. Abra `desktop/release/ServidorBR-win32-x64/ServidorBR.exe`.
 
 O app não empacota banco, API ou dados; esses serviços precisam estar ativos no mesmo computador. Se a API não responder, a interface apresenta a orientação de inicialização. Para desenvolvimento, `npm start` compila o frontend e inicia a janela Electron.

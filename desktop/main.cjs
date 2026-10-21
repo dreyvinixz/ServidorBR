@@ -57,7 +57,7 @@ function response(body, status, headers = {}) {
   });
 }
 
-protocol.handle('servidorbr', async (request) => {
+async function handleProtocol(request) {
   const url = new URL(request.url);
   if (url.hostname !== 'app') return response('Not found', 404);
 
@@ -121,7 +121,7 @@ protocol.handle('servidorbr', async (request) => {
   } catch {
     return response('Desktop assets are missing. Run npm run build:web first.', 500);
   }
-});
+}
 
 function isApprovedExternalUrl(value) {
   try {
@@ -158,6 +158,7 @@ async function createWindow() {
 }
 
 app.whenReady().then(async () => {
+  protocol.handle('servidorbr', handleProtocol);
   await createWindow();
   app.on('activate', () => {
     if (BrowserWindow.getAllWindows().length === 0) createWindow();

@@ -4,7 +4,7 @@ Aplicativo gráfico para Windows que abre a interface React existente em uma jan
 
 ## Iniciar em desenvolvimento
 
-Requisitos: Windows, Node.js 22 ou superior e Docker Desktop.
+Requisitos para desenvolver/empacotar: Windows, Node.js 22.12 ou superior e Docker Desktop. O usuário da pasta já empacotada não precisa instalar Node.js.
 
 Na raiz do repositório, inicie banco e API:
 
