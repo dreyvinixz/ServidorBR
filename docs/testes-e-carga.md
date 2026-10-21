@@ -36,10 +36,23 @@ A análise detalhada de `EXPLAIN (ANALYZE, BUFFERS)` para essa busca está em [`
 
 ## Carga concorrente
 
-Ainda não há medições de RPS, latência sob concorrência, erros simultâneos, CPU ou RAM. A tabela não é preenchida com estimativas; o cenário de carga precisa ser executado sobre a stack e um conjunto representativo antes de registrar conclusões.
+O script `backend/benchmark_concurrent.py` executa buscas por similaridade em paralelo e coleta `docker stats` do backend, banco e frontend durante cada nível. Para reproduzir na stack local:
 
-| Concorrência | RPS | Média | P50 | P95 | P99 | Erros/timeout | CPU/RAM |
-|---:|---|---|---|---|---|---|---|
-| Não medido | - | - | - | - | - | - | - |
+```powershell
+python backend/benchmark_concurrent.py --levels 1,2,4,8 --requests 25 --stats-interval 0.5 --output docs/benchmark-concorrente-2026-10-20.json
+```
+
+Foi usado o cenário `similar=MARIA&limit=100&per_page=1`, com uma chamada de aquecimento e 25 requisições em cada nível (101 chamadas no total). A API expôs até 100 resultados por chamada. O volume tinha 414.801 registros e era uma fixture exploratória mista: 413.990 linhas do arquivo `_FULL` e 811 da publicação mensal. A regra canônica documentada posteriormente seleciona somente `_FULL`; portanto, este resultado preserva a composição usada na medição anterior, não uma reconstrução canônica.
+
+Medição local em 20/10/2026:
+
+| Concorrência | RPS | Média | P50 | P95 | P99/maior | HTTP 200 | Erros | CPU média/pico do banco | RAM máxima do banco |
+|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|
+| 1 | 1,747 | 571,908 ms | 562,910 ms | 622,533 ms | 746,564 ms | 25/25 | 0 | 98,69% / 102,57% | 338,30 MiB |
+| 2 | 2,918 | 664,687 ms | 644,369 ms | 823,892 ms | 836,547 ms | 25/25 | 0 | 196,58% / 200,13% | 341,90 MiB |
+| 4 | 4,464 | 786,386 ms | 752,932 ms | 982,653 ms | 1.022,327 ms | 25/25 | 0 | 307,47% / 394,17% | 347,10 MiB |
+| 8 | 4,131 | 1.243,185 ms | 1.126,815 ms | 1.946,416 ms | 2.126,200 ms | 25/25 | 0 | 377,03% / 610,37% | 354,80 MiB |
+
+Todos os requests retornaram HTTP 200. Nesta rodada, a vazão máxima ocorreu em concorrência 4; elevar para 8 reduziu a vazão e elevou o P95 para 1,95 s enquanto o pico de CPU observado no banco chegou a 610%. Isso aponta saturação crescente do banco para esta consulta e máquina, mas uma rodada de 25 amostras por nível não constitui capacidade de produção. O P99 com 25 amostras é igual ao maior valor observado. `docker stats` foi amostrado durante as rodadas; as contagens de amostras e o [relatório JSON sem dados pessoais](benchmark-concorrente-2026-10-20.json) guardam os valores completos.
 
 Rate limit em memória, limite de consulta de 8 s e timeout Gunicorn de 15 s são configurações iniciais, não limites validados por benchmark.

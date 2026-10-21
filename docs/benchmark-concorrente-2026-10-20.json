@@ -1,0 +1,180 @@
+{
+  "generated_at_utc": "2026-10-21T00:06:41+00:00",
+  "base_url": "http://localhost:3000",
+  "scenario": {
+    "similar": "MARIA",
+    "limit": 100,
+    "per_page": 1
+  },
+  "warmup_requests": 1,
+  "requests_per_level": 25,
+  "levels": [
+    1,
+    2,
+    4,
+    8
+  ],
+  "resource_sampling_interval_seconds": 0.5,
+  "measurements": [
+    {
+      "concurrency": 1,
+      "requests": 25,
+      "duration_seconds": 14.311,
+      "rps": 1.747,
+      "successes": 25,
+      "errors": 0,
+      "status_counts": {
+        "200": 25
+      },
+      "matching_rows": 100,
+      "mean_ms": 571.908,
+      "p50_ms": 562.91,
+      "p95_ms": 622.533,
+      "p99_ms": 746.564,
+      "max_ms": 746.564,
+      "resources": {
+        "containers": {
+          "servidorbr-backend-1": {
+            "samples": 7,
+            "cpu_avg_percent": 1.45,
+            "cpu_peak_percent": 1.82,
+            "memory_peak_mib": 82.49
+          },
+          "servidorbr-db-1": {
+            "samples": 7,
+            "cpu_avg_percent": 98.69,
+            "cpu_peak_percent": 102.57,
+            "memory_peak_mib": 338.3
+          },
+          "servidorbr-frontend-1": {
+            "samples": 7,
+            "cpu_avg_percent": 0.1,
+            "cpu_peak_percent": 0.15,
+            "memory_peak_mib": 12.38
+          }
+        },
+        "sampling_errors": {}
+      }
+    },
+    {
+      "concurrency": 2,
+      "requests": 25,
+      "duration_seconds": 8.567,
+      "rps": 2.918,
+      "successes": 25,
+      "errors": 0,
+      "status_counts": {
+        "200": 25
+      },
+      "matching_rows": 100,
+      "mean_ms": 664.687,
+      "p50_ms": 644.369,
+      "p95_ms": 823.892,
+      "p99_ms": 836.547,
+      "max_ms": 836.547,
+      "resources": {
+        "containers": {
+          "servidorbr-backend-1": {
+            "samples": 4,
+            "cpu_avg_percent": 2.07,
+            "cpu_peak_percent": 2.28,
+            "memory_peak_mib": 82.2
+          },
+          "servidorbr-db-1": {
+            "samples": 4,
+            "cpu_avg_percent": 196.58,
+            "cpu_peak_percent": 200.13,
+            "memory_peak_mib": 341.9
+          },
+          "servidorbr-frontend-1": {
+            "samples": 4,
+            "cpu_avg_percent": 0.15,
+            "cpu_peak_percent": 0.21,
+            "memory_peak_mib": 12.27
+          }
+        },
+        "sampling_errors": {}
+      }
+    },
+    {
+      "concurrency": 4,
+      "requests": 25,
+      "duration_seconds": 5.601,
+      "rps": 4.464,
+      "successes": 25,
+      "errors": 0,
+      "status_counts": {
+        "200": 25
+      },
+      "matching_rows": 100,
+      "mean_ms": 786.386,
+      "p50_ms": 752.932,
+      "p95_ms": 982.653,
+      "p99_ms": 1022.327,
+      "max_ms": 1022.327,
+      "resources": {
+        "containers": {
+          "servidorbr-backend-1": {
+            "samples": 3,
+            "cpu_avg_percent": 16.62,
+            "cpu_peak_percent": 39.89,
+            "memory_peak_mib": 81.81
+          },
+          "servidorbr-db-1": {
+            "samples": 3,
+            "cpu_avg_percent": 307.47,
+            "cpu_peak_percent": 394.17,
+            "memory_peak_mib": 347.1
+          },
+          "servidorbr-frontend-1": {
+            "samples": 3,
+            "cpu_avg_percent": 0.31,
+            "cpu_peak_percent": 0.44,
+            "memory_peak_mib": 12.09
+          }
+        },
+        "sampling_errors": {}
+      }
+    },
+    {
+      "concurrency": 8,
+      "requests": 25,
+      "duration_seconds": 6.052,
+      "rps": 4.131,
+      "successes": 25,
+      "errors": 0,
+      "status_counts": {
+        "200": 25
+      },
+      "matching_rows": 100,
+      "mean_ms": 1243.185,
+      "p50_ms": 1126.815,
+      "p95_ms": 1946.416,
+      "p99_ms": 2126.2,
+      "max_ms": 2126.2,
+      "resources": {
+        "containers": {
+          "servidorbr-backend-1": {
+            "samples": 3,
+            "cpu_avg_percent": 5.83,
+            "cpu_peak_percent": 9.74,
+            "memory_peak_mib": 81.57
+          },
+          "servidorbr-db-1": {
+            "samples": 3,
+            "cpu_avg_percent": 377.03,
+            "cpu_peak_percent": 610.37,
+            "memory_peak_mib": 354.8
+          },
+          "servidorbr-frontend-1": {
+            "samples": 3,
+            "cpu_avg_percent": 0.31,
+            "cpu_peak_percent": 0.5,
+            "memory_peak_mib": 12.26
+          }
+        },
+        "sampling_errors": {}
+      }
+    }
+  ]
+}
