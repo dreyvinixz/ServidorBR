@@ -11,7 +11,7 @@
 
 Foram usadas duas publicações da competência 08/2025 no [repositório oficial SEGRt](https://repositorio.dados.gov.br/segrt/): a extração mensal [`APOSENTADOS_082025.csv`](https://repositorio.dados.gov.br/segrt/APOSENTADOS_082025.csv) e a fotografia completa [`APOSENTADOS_082025_FULL.csv`](https://repositorio.dados.gov.br/segrt/APOSENTADOS_082025_FULL.csv). O índice lista os arquivos com 327 KB e 163 MB, respectivamente, ambos datados de 24/12/2025.
 
-O [dicionário oficial](https://repositorio.dados.gov.br/segrt/1.20180829-DadosRecursos-Aposentados.pdf) descreve 18 campos. Os CSVs não têm cabeçalho; a leitura posicional usa `Nome` (coluna 1), `Nome do órgão` (coluna 4) e `Cargo` (coluna 7). CPF e matrícula nunca entram na consulta de inserção, no hash de identidade ou no schema PostgreSQL. Os arquivos usam separador `;` e CP1252. A fotografia completa tem 127 registros com colunas adicionais e um campo de 280.630 caracteres numa coluna legal não pesquisada; o ETL lê as três colunas necessárias e tolera esses extras.
+O [dicionário oficial](https://repositorio.dados.gov.br/segrt/1.20180829-DadosRecursos-Aposentados.pdf) descreve 18 campos. A publicação mensal não tem cabeçalho; sua leitura posicional usa `Nome` (coluna 1), `Nome do órgão` (coluna 4) e `Cargo` (coluna 7). A publicação `_FULL` tem cabeçalho próprio, com `Nome`, `Orgao` e `Cargo emprego`; ela precisa ser lida por esses rótulos, não pelas posições sem cabeçalho. CPF e matrícula nunca entram na consulta de inserção, no hash de identidade ou no schema PostgreSQL. Os arquivos usam separador `;` e CP1252. A fotografia completa tem 127 registros com colunas adicionais e um campo de 280.630 caracteres numa coluna legal não pesquisada; o ETL lê as três colunas necessárias e tolera esses extras.
 
 ## Regra de precedência da competência
 
@@ -20,6 +20,8 @@ O [índice oficial](https://repositorio.dados.gov.br/segrt/) publica `APOSENTADO
 **Regra operacional do ServidorBR:** quando houver publicação `_FULL` para uma competência, ela é a fonte canônica da busca ampla de aposentados. O arquivo mensal da mesma competência não é somado ao `_FULL` e não é deduplicado por nome; sem uma chave adequada, isso poderia misturar snapshots ou pessoas homônimas. Se uma competência não tiver `_FULL`, a carga deve ser identificada como cobertura limitada e documentada, sem presumir que o arquivo mensal representa o cadastro completo.
 
 A carga local existente continua contendo os dois arquivos (414.801 linhas) como fixture exploratória e reproduz os benchmarks já publicados; não foi apagada nesta alteração documental. Uma futura reconstrução canônica de 08/2025 deve carregar somente os 413.990 registros do `_FULL`.
+
+**Auditoria de 21/10/2026:** a tabela local tem 811 registros mensais com `cargo` e `orgao` preenchidos, mas os 413.990 registros de `_FULL` estão com ambos nulos. O cabeçalho `_FULL` usa `Cargo emprego` e `Orgao`; o ETL anterior reconhecia `Nome`, mas não esses dois aliases. O mapeamento do importador foi corrigido. A base já carregada ainda requer uma atualização controlada para recuperar esses campos; até essa atualização, a interface não consegue exibi-los para registros originados de `_FULL`.
 
 | Arquivo | Bytes locais | Linhas lidas | Inseridas | Duplicadas | Rejeitadas | Tempo | Vazão |
 |---|---:|---:|---:|---:|---:|---:|---:|
@@ -33,8 +35,8 @@ A segunda execução da extração mensal inseriu 0 e reconheceu 811 duplicatas 
 | Campo original | Destino | Aplicação | Tratamento |
 |---|---|---|---|
 | `Nome` | `nome`, `nome_norm` | Busca nominal | Remove diacríticos, maiúsculas e compactação de espaços |
-| `Cargo` | `cargo`, `cargo_norm` | Busca parcial | Mesma normalização; opcional |
-| `Nome do órgão` | `orgao`, `orgao_norm` | Busca parcial | Mesma normalização; opcional |
+| `Cargo` / `Cargo emprego` | `cargo`, `cargo_norm` | Busca parcial | Mesma normalização; opcional |
+| `Nome do órgão` / `Orgao` | `orgao`, `orgao_norm` | Busca parcial | Mesma normalização; opcional |
 | `CPF`, `Matrícula do Servidor` | Não armazenados | Nenhum | Descartados pelo ETL |
 | UF | `uf` nullable | Filtro previsto | O dicionário consultado não contém esse atributo; não é inferido |
 
@@ -48,7 +50,7 @@ O dicionário de aposentados documenta nome, órgão e cargo, entre outros campo
 4. Execute: `docker compose exec backend python etl.py /tmp/APOSENTADOS_082025.csv`.
 5. Guarde o resumo da execução e a competência/fonte do arquivo no relatório de entrega.
 
-ETL aceita `;`, `,` ou tabulação; cabeçalhos normalizados equivalentes a `Nome`, `Cargo` e `Nome do órgão`; e o formato oficial sem cabeçalho com ao menos 18 colunas. A detecção de UTF-8 é feita em streaming e usa CP1252 quando a validação UTF-8 falha. O limite de campo é 1.000.000 caracteres; campos acima desse limite falham a transação. Registros sem nome são rejeitados; no formato oficial posicional, linhas com menos de 18 colunas também são rejeitadas. Hash SHA-256 de nome, cargo, órgão e nome do arquivo evita reimportar linhas idênticas do mesmo arquivo. Quando a mesma combinação aparece mais de uma vez no CSV, o ETL acrescenta um ordinal de ocorrência ao hash para preservar cada linha e manter a reimportação idempotente. A primeira ocorrência mantém o hash anterior para compatibilidade com registros já importados. Não faz `TRUNCATE` e não apaga registros anteriores.
+ETL aceita `;`, `,` ou tabulação; cabeçalhos normalizados equivalentes a `Nome`, `Cargo`/`Cargo emprego` e `Nome do órgão`/`Orgao`; e o formato mensal oficial sem cabeçalho com ao menos 18 colunas. A detecção de UTF-8 é feita em streaming e usa CP1252 quando a validação UTF-8 falha. O limite de campo é 1.000.000 caracteres; campos acima desse limite falham a transação. Registros sem nome são rejeitados; no formato oficial posicional, linhas com menos de 18 colunas também são rejeitadas. Hash SHA-256 de nome, cargo, órgão e nome do arquivo evita reimportar linhas idênticas do mesmo arquivo. Quando a mesma combinação aparece mais de uma vez no CSV, o ETL acrescenta um ordinal de ocorrência ao hash para preservar cada linha e manter a reimportação idempotente. A primeira ocorrência mantém o hash anterior para compatibilidade com registros já importados. Não faz `TRUNCATE` e não apaga registros anteriores.
 
 ## Limitações conhecidas
 
