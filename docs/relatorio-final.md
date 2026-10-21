@@ -1,7 +1,7 @@
 # Relatório de estado do projeto - ServidorBR
 
 **Atualizado em:** 20/10/2026  
-**Estado:** reparo dos campos FULL e busca com listas pesquisáveis integrados pelo PR #46; aplicativo desktop adicional empacotado localmente na branch `feat/SB-29-desktop-app`, aguardando PR/CI.
+**Estado:** reparo FULL, filtros pesquisáveis e aplicativo desktop integrados à `main` pelos PRs #46 e #47.
 
 ## 1. Escopo disponível
 
@@ -9,7 +9,7 @@ O MVP reúne frontend estático, API Flask/Gunicorn, PostgreSQL com índices `pg
 
 ## 2. Equipe e histórico verificável
 
-O enunciado requer de três a quatro integrantes e distribuição real de tarefas/commits. `TASK.md` registra dois nomes e um integrante como `PREENCHER`; a autoria Git desta implementação é somente `dreyvinixz`. Não atribuir autoria, datas ou trabalho a integrantes sem evidência. A composição precisa ser confirmada pelo grupo antes da submissão.
+O enunciado requer de três a quatro integrantes e distribuição real de tarefas/commits. A autoria Git desta implementação é somente `dreyvinixz`, que realizou o trabalho individualmente. Não atribuir autoria, datas ou trabalho a outras pessoas.
 
 O `main` remoto contém mais de 30 commits após integração dos PRs #13 a #30. A Issue [SB-05](https://github.com/dreyvinixz/ServidorBR/issues/12) foi fechada com a entrega do ETL oficial. O diário disponível em `docs/burndown.csv` termina em 26/09/2026 e não representa o trabalho executado em outubro; não foi reconstruído retroativamente.
 
@@ -31,13 +31,13 @@ O enunciado define entrega limite em 13/10/2026. Esta implementação começou e
 - O reparo autorizado da base local criou `servidores_full_fields_backup_20261020` com 413.990 linhas e atualizou somente `cargo`, `cargo_norm`, `orgao` e `orgao_norm` por `(source_file, source_hash)`. Readback confirmou 414.801 registros totais, 413.920 linhas FULL com cargo, 413.990 com órgão e 811 linhas mensais intactas. A procedure e o SQL de reversão estão em `docs/reparo-campos-full-202508.md`.
 - A API `GET /api/opcoes` fornece 1.479 cargos e 183 órgãos distintos da base; a busca aproximada `Maria Silva` retornou 100 resultados com campos de cargo/órgão preenchidos. `npm run build` e `python -m unittest discover -s backend -p 'test_*.py'` passaram (16 testes). A API também retornou 200 para uma consulta vazia.
 - A interface web ainda aguarda inspeção visual no navegador: o ambiente de automação não disponibilizou navegador. A responsividade foi compilada, mas não foi declarada como visualmente aceita.
-- O desktop reutiliza a interface React via protocolo local `servidorbr://`, encaminha chamadas para a API e mantém `contextIsolation`, sandbox e `nodeIntegration: false`. `npm run check`, `npm audit` (0 vulnerabilidades) e `npm run package:win` passaram; `ServidorBR.exe` foi executado e abriu uma janela com título `ServidorBR — Consulta pública`. A pasta portátil em `desktop/release/ServidorBR-win32-x64/` é um artefato local ignorado pelo Git; o job Windows do PR deverá gerar o artefato de CI.
+- O desktop reutiliza a interface React via protocolo local `servidorbr://`, encaminha chamadas para a API e mantém `contextIsolation`, sandbox e `nodeIntegration: false`. `npm run check`, `npm audit` (0 vulnerabilidades) e `npm run package:win` passaram; `ServidorBR.exe` foi executado e abriu uma janela com título `ServidorBR — Consulta pública`. O job `desktop` do PR #47 também passou e publicou o artefato Windows no CI; a pasta local `desktop/release/ServidorBR-win32-x64/` é ignorada pelo Git.
 
 ## 5. Branches, PRs e proteção
 
 - PRs #13 a #34 foram integrados por Pull Requests; PR #21 integrou o formato oficial e as validações do ETL, PR #24 ampliou o parser para a fotografia completa, PR #26 documentou a análise de consulta, PR #28 fixou a regra de fonte, PR #30 adicionou o benchmark concorrente, PR #32 atualizou este relatório, e PR #34 limitou o `COUNT` da busca por similaridade e repetiu as medições.
 - PRs #36, #37, #39, #41 e #43 integraram o frontend React/Tailwind, documentação de status, proxy Vite, opções avançadas e aliases do FULL. O PR #46 integrou o reparo de dados e listas pesquisáveis; seus checks `backend` e `frontend` passaram.
-- A Issue #45 acompanha o aplicativo desktop para o ponto adicional de 1,0. O pacote Windows funciona localmente; ainda falta PR integrado e sucesso do job Windows em CI.
+- O PR #47 integrou o aplicativo desktop para o ponto adicional de 1,0; os checks `backend`, `frontend` e `desktop` passaram, e a Issue #45 foi fechada.
 - A proteção de `main` exige o check `backend` e branch atualizada; administradores também estão sujeitos às regras; force push e exclusão estão bloqueados.
 - A exigência de aprovação foi configurada como zero para permitir o fluxo solo. Aprovação independente pode ser adicionada quando houver outro colaborador; não foi simulada.
 
@@ -53,4 +53,4 @@ O enunciado define entrega limite em 13/10/2026. Esta implementação começou e
 
 ## 7. Conclusão
 
-O código, os testes e a documentação permitem reproduzir a execução local com uma amostra oficial. Para fechar o repositório ainda faltam integrar a Issue #45 com CI Windows e concluir uma inspeção visual no navegador quando este estiver disponível. Não declarar a entrega acadêmica como concluída: faltam evidência da equipe exigida e adequação ao prazo.
+O código, os testes e a documentação permitem reproduzir a execução local com uma amostra oficial; a entrega do ponto adicional desktop foi integrada. A inspeção visual no navegador permanece pendente porque não havia navegador disponível no ambiente. Não declarar a entrega acadêmica como concluída: o trabalho foi individual, embora o enunciado peça de três a quatro integrantes, e começou após o prazo indicado.
