@@ -1,7 +1,7 @@
 # Relatório de estado do projeto - ServidorBR
 
 **Atualizado em:** 20/10/2026  
-**Estado:** MVP integrado; validações locais com amostra oficial concluídas; entrega acadêmica ainda não aprovada.
+**Estado:** MVP integrado; análise local de consultas, benchmark concorrente e auditoria documental das fontes concluídos; entrega acadêmica ainda não aprovada.
 
 ## 1. Escopo disponível
 
@@ -11,7 +11,7 @@ O MVP reúne frontend estático, API Flask/Gunicorn, PostgreSQL com índices `pg
 
 O enunciado requer de três a quatro integrantes e distribuição real de tarefas/commits. `TASK.md` registra dois nomes e um integrante como `PREENCHER`; a autoria Git desta implementação é somente `dreyvinixz`. Não atribuir autoria, datas ou trabalho a integrantes sem evidência. A composição precisa ser confirmada pelo grupo antes da submissão.
 
-O `main` remoto contém mais de 30 commits após integração dos PRs #13 a #22. A Issue [SB-05](https://github.com/dreyvinixz/ServidorBR/issues/12) foi fechada com a entrega do ETL oficial. O diário disponível em `docs/burndown.csv` termina em 26/09/2026 e não representa o trabalho executado em outubro; não foi reconstruído retroativamente.
+O `main` remoto contém mais de 30 commits após integração dos PRs #13 a #30. A Issue [SB-05](https://github.com/dreyvinixz/ServidorBR/issues/12) foi fechada com a entrega do ETL oficial. O diário disponível em `docs/burndown.csv` termina em 26/09/2026 e não representa o trabalho executado em outubro; não foi reconstruído retroativamente.
 
 ## 3. Prazo e sprints
 
@@ -24,22 +24,24 @@ O enunciado define entrega limite em 13/10/2026. Esta implementação começou e
 - Os três serviços iniciaram; `db` e `backend` ficaram saudáveis; página e `GET /api/health` retornaram HTTP 200.
 - Fontes oficiais `APOSENTADOS_082025.csv` e `APOSENTADOS_082025_FULL.csv`: 811 e 413.990 linhas inseridas, respectivamente; banco com 414.801 hashes únicos. A reimportação da extração mensal inseriu 0 e reconheceu 811 duplicatas. CPF e matrícula não existem no schema e não são enviados ao banco pelo ETL.
 - Busca por cargo retornou HTTP 200 e 35 registros; similaridade retornou HTTP 200 com limite de 100. O defeito no operador `%` do `pg_trgm` foi corrigido e ganhou teste de regressão.
-- Medições sequenciais de API: 20 amostras por cenário sobre 414.801 registros, sem concorrência; P50/P95 foram registrados em `docs/testes-e-carga.md`. Não há benchmark concorrente nem métricas de CPU/RAM.
+- `EXPLAIN (ANALYZE, BUFFERS)` sobre 414.801 linhas apontou 6.970 resultados após rechecagem e ~10,4 mil blocos de heap; o sort Top-N consumiu cerca de 2 ms. Um experimento de `COUNT` limitado a 100 levou 31,440 ms contra mediana de 207,183 ms para o `COUNT` integral. A API não foi alterada nessa investigação.
+- O benchmark concorrente executou 25 requisições em cada nível (1, 2, 4 e 8), com 100 respostas HTTP 200 e nenhum erro. A vazão máxima foi 4,464 req/s em concorrência 4; em concorrência 8, o P95 foi 1,946 s e o pico observado de CPU do banco foi 610%. Uma execução curta não comprova capacidade de produção; o P99 com 25 amostras é o maior valor observado.
+- Os resultados sequenciais e concorrentes, instruções de reprodução e métricas de CPU/RAM estão em `docs/testes-e-carga.md`; os planos completos da análise estão em `docs/analise-busca-similaridade.md` e o benchmark em `docs/benchmark-concorrente-2026-10-20.json`.
 
 ## 5. Branches, PRs e proteção
 
-- PRs #13 a #24 foram integrados por Pull Requests; PR #18 integrou o release, PR #21 integrou o formato oficial e as validações do ETL, PRs #22/#23 atualizaram este relatório, e PR #24 ampliou o parser para a fotografia completa.
+- PRs #13 a #30 foram integrados por Pull Requests; PR #21 integrou o formato oficial e as validações do ETL, PR #24 ampliou o parser para a fotografia completa, PR #26 documentou a análise de consulta, PR #28 fixou a regra de fonte, e PR #30 adicionou e executou o benchmark concorrente.
 - A proteção de `main` exige o check `backend` e branch atualizada; administradores também estão sujeitos às regras; force push e exclusão estão bloqueados.
 - A exigência de aprovação foi configurada como zero para permitir o fluxo solo. Aprovação independente pode ser adicionada quando houver outro colaborador; não foi simulada.
 
 ## 6. Limitações conhecidas
 
-1. A fonte importada cobre aposentados civis; servidores ativos não estão integrados.
-2. O dicionário oficial de aposentados não documenta UF; o endpoint retorna `422 UF_UNAVAILABLE` para UF válida e não infere estado pelo órgão.
-3. Carreiras/Cargos não foi relacionado automaticamente a registros individuais.
-4. O ETL é append-only; mudanças ou remoções entre competências não são reconciliadas automaticamente.
-5. As consultas foram medidas localmente e sequencialmente; o benchmark não valida carga concorrente.
-6. Rate limit em memória não sincroniza instâncias e não foi validado sob concorrência.
+1. A base consultada cobre aposentados civis. Para uma competência com arquivo `_FULL`, a regra do ServidorBR escolhe `_FULL` como fonte canônica e não soma o arquivo mensal; o volume local mantido para reprodução ainda contém ambos e, por isso, é uma fixture exploratória mista.
+2. O dicionário oficial de aposentados não documenta UF; o endpoint continua retornando `422 UF_UNAVAILABLE` para UF válida e não infere estado pelo órgão.
+3. O dicionário oficial de Carreiras/Cargos declara dados de servidores ativos e `UF da UPAG de vinculação`. Essa UF é da unidade pagadora, não residência. A fonte ainda não foi integrada; registros ativos continuam fora da API.
+4. Carreiras/Cargos não foi relacionado automaticamente a registros individuais de aposentados. A integração exige separar a situação funcional e descartar CPF.
+5. O ETL é append-only; mudanças ou remoções entre competências não são reconciliadas automaticamente.
+6. O benchmark concorrente é uma rodada local curta, limitada a uma consulta e a quatro níveis. Rate limit em memória não sincroniza instâncias, e os limites atuais de timeout não são um SLO validado.
 7. A exigência de equipe mínima e a data limite do enunciado continuam não atendidas por este trabalho solo tardio.
 
 ## 7. Conclusão
