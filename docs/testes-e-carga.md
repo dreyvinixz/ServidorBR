@@ -32,6 +32,8 @@ O cenário de similaridade revelou um erro Psycopg no operador `%` do `pg_trgm`,
 
 Esses números são uma linha de base sequencial na fotografia completa local; similaridade foi a consulta mais lenta, com P50 de 464 ms e P95 de 535 ms. Um teste observou um pico isolado de 2,865 s na busca exata sem resultado. Os resultados justificam uma etapa futura de otimização e não representam teste concorrente ou garantia de produção.
 
+A análise detalhada de `EXPLAIN (ANALYZE, BUFFERS)` para essa busca está em [`analise-busca-similaridade.md`](analise-busca-similaridade.md). Ela separa o custo do `COUNT`, do filtro trigram e da ordenação sem mudar consulta ou índice de produção.
+
 ## Carga concorrente
 
 Ainda não há medições de RPS, latência sob concorrência, erros simultâneos, CPU ou RAM. A tabela não é preenchida com estimativas; o cenário de carga precisa ser executado sobre a stack e um conjunto representativo antes de registrar conclusões.

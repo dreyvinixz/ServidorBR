@@ -9,6 +9,7 @@ Documentação baseada no código e nas evidências disponíveis até 20/10/2026
 | [`api.md`](api.md) | Rotas, parâmetros, respostas e erros |
 | [`seguranca.md`](seguranca.md) | Controles efetivos e próximos controles |
 | [`testes-e-carga.md`](testes-e-carga.md) | Comandos executados e lacuna de benchmark |
+| [`analise-busca-similaridade.md`](analise-busca-similaridade.md) | EXPLAIN ANALYZE do filtro trigram, COUNT e ordenação |
 | [`relatorio-final.md`](relatorio-final.md) | Estado, autoria, prazos, evidências e pendências de aceitação |
 | [`burndown.csv`](burndown.csv) | Histórico real disponível, atualizado somente até 26/09/2026 |
 | [`sprint-01-board.md`](sprint-01-board.md) | Snapshot do quadro de Sprint 1 |
