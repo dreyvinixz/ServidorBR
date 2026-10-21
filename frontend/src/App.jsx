@@ -14,6 +14,8 @@ function Icon({ name, className = 'size-5' }) {
     close: <><path d="m18 6-12 12M6 6l12 12" /></>,
     clock: <><circle cx="12" cy="12" r="9" /><path d="M12 7v5l3 2" /></>,
     shield: <><path d="M12 22s8-4 8-11V5l-8-3-8 3v6c0 7 8 11 8 11Z" /><path d="m9 12 2 2 4-4" /></>,
+    sliders: <><path d="M4 21v-7m0-4V3m8 18v-9m0-4V3m8 18v-5m0-4V3" /><path d="M2 14h4m4-6h4m4 6h4" /></>,
+    list: <><path d="M8 6h13M8 12h13M8 18h13" /><path d="M3 6h.01M3 12h.01M3 18h.01" /></>,
   };
   return <svg {...common}>{paths[name]}</svg>;
 }
@@ -182,18 +184,34 @@ export default function App() {
               <SearchField label="Cargo ou profissão" name="cargo" icon="briefcase" placeholder="Ex.: Analista" maxLength={120} value={filters.cargo} onChange={updateField} />
               <SearchField label="Órgão ou instituição" name="orgao" icon="building" placeholder="Ex.: Ministério" maxLength={160} value={filters.orgao} onChange={updateField} />
             </div>
-            <details className="advanced-search mt-6 border-t border-slate-100 pt-4">
-              <summary className="flex cursor-pointer list-none items-center justify-between gap-3 text-sm font-semibold text-slate-700 outline-none focus-visible:ring-2 focus-visible:ring-emerald-700">
-                <span>Opções avançadas</span><span className="flex items-center gap-2 text-xs font-medium text-slate-500">Similaridade e resultados por página <Icon name="chevron" className="size-4 transition-transform" /></span>
+            <details className="advanced-search mt-6">
+              <summary className="advanced-summary">
+                <span className="advanced-icon"><Icon name="sliders" className="size-5" /></span>
+                <span className="advanced-copy">
+                  <span className="advanced-title">Opções avançadas</span>
+                  <span className="advanced-description">Busca aproximada e preferências de resultados</span>
+                </span>
+                <span className="advanced-optional">Opcional</span>
+                <span className="advanced-chevron"><Icon name="chevron" className="size-4" /></span>
               </summary>
-              <div className="mt-5 grid gap-5 md:grid-cols-2">
-                <SearchField label="Nome aproximado" name="similar" icon="search" placeholder="Ex.: Maria Silva" hint="Encontra nomes parecidos; a busca considera até 100 resultados." maxLength={120} value={filters.similar} onChange={updateField} />
-                <label className="block">
-                  <span className="mb-2 block text-sm font-semibold text-slate-700">Resultados por página</span>
-                  <select name="per_page" value={filters.per_page} onChange={updateField} className="field-input max-w-xs">
-                    {[10, 25, 50, 100].map((size) => <option key={size} value={size}>{size} resultados</option>)}
-                  </select>
-                </label>
+              <div className="advanced-content">
+                <div className="advanced-content-heading">
+                  <div>
+                    <h3>Personalize sua consulta</h3>
+                    <p>Esses ajustes não são necessários para uma busca comum.</p>
+                  </div>
+                </div>
+                <div className="grid gap-5 md:grid-cols-2">
+                  <SearchField label="Nome aproximado" name="similar" icon="search" placeholder="Ex.: Maria Silva" hint="Use quando não souber a grafia exata do nome." maxLength={120} value={filters.similar} onChange={updateField} />
+                  <label className="block">
+                    <span className="mb-2 flex items-center gap-2 text-sm font-semibold text-slate-700"><Icon name="list" className="size-4 text-slate-400" />Resultados por página</span>
+                    <select name="per_page" value={filters.per_page} onChange={updateField} className="field-input max-w-xs">
+                      {[10, 25, 50, 100].map((size) => <option key={size} value={size}>{size} resultados</option>)}
+                    </select>
+                    <span className="mt-2 block text-xs leading-5 text-slate-500">Escolha quantos registros mostrar em cada página.</span>
+                  </label>
+                </div>
+                <div className="advanced-note"><Icon name="shield" className="size-4 shrink-0" /><p>A busca aproximada compara nomes semelhantes e tem limite de 100 resultados no total.</p></div>
               </div>
             </details>
             <div className="mt-6 flex flex-col-reverse gap-3 border-t border-slate-100 pt-5 sm:flex-row sm:items-center">
