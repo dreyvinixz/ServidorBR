@@ -12,3 +12,8 @@ desktop/node_modules/
 desktop/web-dist/
 desktop/release/
 tmp/
+
+# Base oficial compactada para reprodução autorizada
+!db/data/APOSENTADOS_082025_FULL.csv.gz.part*
+!db/data/README.md
+!db/data/extract_csv.py
