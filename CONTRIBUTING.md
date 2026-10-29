@@ -18,7 +18,7 @@ git switch -c feat/SB-07-api-filtros
 - Mova a Issue para `In Progress` somente quando começar o trabalho real.
 - Faça commits coesos: `tipo(escopo): resumo [SB-XX]`.
 - Registre impedimentos reais no quadro e na Issue.
-- Não envie segredos, arquivo `.env`, dados sensíveis ou CSVs públicos volumosos.
+- Não envie segredos, arquivo `.env`, dados sensíveis ou CSVs públicos volumosos. Exceção autorizada: a cópia compactada da fonte pública `db/data/APOSENTADOS_082025_FULL.csv.gz.part*`, documentada em `db/data/README.md`, é versionada para reprodução da carga.
 
 ## Pull Request e revisão
 
